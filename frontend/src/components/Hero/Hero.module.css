@@ -1,0 +1,63 @@
+@import "./../variables.css";
+
+.hero {
+    position: relative;
+    padding: 30vh 0;
+    height: 100vh;
+    background-size: max(100vw, 1900px) auto;
+    background-image: url('../../../public/assets/image-1.jpg');
+    background-position-y: var(--bg-position);
+    background-position-x: 0;
+    background-attachment: fixed;
+    text-align: center;
+}
+
+
+.titleContainer {
+    position: relative;
+    height: fit-content;
+    width: 60%;
+    word-wrap: normal;
+    margin: 0 auto;
+    top: -20px;
+}
+
+.title {
+    font-size: 35px;
+    font-family: var(--heading-font);
+    text-transform: uppercase;
+    line-height: 40px;
+}
+
+.textContainer {
+    height: fit-content;
+    width: 40%;
+    margin: 0 auto;
+    word-wrap: normal;
+}
+
+.text {
+    font-size: 25px;
+    font-family: var(--heading-font);
+    line-height: 30px;
+}
+
+@media screen and (max-width: 800px) {
+    .titleContainer {
+        width: 70%;
+        text-align: center;
+    }
+
+    .title {
+        font-size: 30px;
+    }
+
+    .textContainer {
+        width: 70%;
+        text-align: center;
+    }
+
+    .text {
+        font-size: 20px;
+    }
+}

@@ -1,0 +1,28 @@
+@import "./../variables.css";
+
+.container {
+    position: relative;
+    display: grid;
+    grid-gap: 5%;
+    grid-template-areas:
+        'container1 container2 container3'
+        'subtext subtext subtext';
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: 90% 1fr;
+    height: 30vh;
+    width: 100%;
+    margin: 0;
+    outline: 1px solid red;
+}
+
+.container1 {
+
+}
+
+.container2 {
+
+}
+
+.container3 {
+    
+}
