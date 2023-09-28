@@ -1,0 +1,23 @@
+@import "./variables.css";
+
+body {
+    position: relative;
+    width: 100%;
+    overflow-x: hidden;
+    margin: 0;
+    padding: 0;
+    background-color: rgb(var(--bg-rgb));
+    color: var(--text-color);
+}
+
+* {
+    box-sizing: border-box;
+}
+
+html {
+    font-size: 1em;
+}
+
+a {
+    color: var(--text-color);
+}

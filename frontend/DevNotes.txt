@@ -1,0 +1,65 @@
+___________________________________________________________________________
+DEVELOPER NOTES
+
+This file's for both myself and others' sanity ( but mostly my own )
+
+It contains notes on architecture decisions, file structures, 
+variables, and coding conventions throughout the app.
+
+It's a good idea to look over this to get a feel for the coding
+style before modifying / digging-into the code base.
+___________________________________________________________________________
+index.jsx
+- entry point
+- renders browser and router
+- routes to App for root
+___________________________________________________________________________
+App.jsx
+- contains routes to pages
+- uses the Layout element as a parent for all other components in App
+- index element is the home page
+___________________________________________________________________________
+Layout
+- parent element for all other components
+- easy access to add things like banners across all page views
+- root of Outlet nesting for the app structure
+___________________________________________________________________________
+Outlet nesting
+- pages are contained in Outlet elements
+- each outlet provides a space for any components within
+___________________________________________________________________________
+Components
+- components can be unique, or generic
+- uniques only have one iteration of content, like NavBar or Footer
+- uniques have their conent in their main component in the jsx file
+- generics have multiple instances, repeating sections like TwoColumnA
+- generics have their modifiable conent in the view parent-component
+- content is passed down as either children or props
+- components are seperated into smaller components within their file
+___________________________________________________________________________
+Views
+- views are just the components which represent the pages of the app
+- they consist of combinations of unique and generic components
+___________________________________________________________________________
+Hooks
+- custom hooks are preferred for cleanliness in the component files
+___________________________________________________________________________
+variables.css file
+- provides a single place to modify the main css variables
+- to be imported into component's css modules
+___________________________________________________________________________
+css modules
+- one css module per component ( USE CONTAINERS PLS! )
+- classes appear in css file sequentially as they appear on the page
+- module are named <ComponentName>CSS
+___________________________________________________________________________
+css practices
+- declare what container is for in camelcase e.g. ( titleContainer )
+- focuses on simple, easy to read naming ( DONT BE CONFUSING )
+
+
+
+ToDo:
+- css for columnA and B
+- Footer
+- background div for header?

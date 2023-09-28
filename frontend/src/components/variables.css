@@ -1,0 +1,32 @@
+@import url("https://fonts.googleapis.com/css?family=Julius+Sans+One|Barlow&display=swap");
+
+:root {
+    /* Generic */
+
+    --transition-duration: 200ms;
+    --section-width: 74%;
+
+    /* Light Color Theme */
+
+    --bg-rgb: 200, 250, 250;
+    --accent-rgb: 0, 69, 69;
+
+    /* Dark Color Theme */
+
+
+
+    /* Typography */
+
+    --heading-font: 'Julius Sans One', serif;
+    --text-font: 'Barlow', serif;
+    
+    --heading-color: #DDD;
+    --text-color: #DDD;
+
+
+    /* Element Variables */
+
+    --top-nav-position: absolute;
+
+    --hero-bg-position: 0px;
+}
