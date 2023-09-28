@@ -1,0 +1,51 @@
+____________________________________________________________________
+DEVELOPER NOTES
+
+This file's for both myself and others' sanity ( but mostly my own )
+
+It contains notes on architecture decisions, file structures, 
+variables, and coding conventions throughout the app.
+
+It's a good idea to look over this to get a feel for the coding
+style before modifying / digging-into the code base.
+____________________________________________________________________
+index.jsx
+- entry point
+- renders browser and router
+- routes to App for root
+____________________________________________________________________
+App.jsx
+- contains routes to pages
+- uses the Layout element as a parent for all other components in App
+- index element is the home page
+____________________________________________________________________
+Layout
+- parent element for all other components
+- easy access to add things like banners across all page views
+- root of Outlet nesting for the app structure
+____________________________________________________________________
+Outlet nesting
+- pages are contained in Outlet elements
+- each outlet provides a space for any components within
+____________________________________________________________________
+Component nesting
+- components are seperated into smaller components within their file
+- try to keep any modifiable content within the main component
+- props can be used, but context is preferred for nesting content
+____________________________________________________________________
+Hooks
+- custom hooks are preferred for cleanliness in the component files
+____________________________________________________________________
+variables.css file
+- provides a single place to modify the main css variables
+- to be imported into component's css modules
+____________________________________________________________________
+css modules
+- one css module per component
+- broken down components are often containers with content inside
+- module are named <Component>CSS
+____________________________________________________________________
+css practices
+- declare what container is for in camelcase e.g. ( titleContainer )
+- focuses on simple, easy to read naming ( DONT BE CONFUSING )
+
