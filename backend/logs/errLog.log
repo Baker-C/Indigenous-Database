@@ -1,0 +1,9 @@
+20230917	09:36:57	c247710c-6476-4edf-ab15-4828b7ac3e17	Error: Not allowed by CORS	OPTIONS	/	https://www.shutterstock.com
+20230917	09:36:57	0482083c-3968-492d-be43-b28a596d5a3f	Error: Not allowed by CORS	GET	/	https://www.shutterstock.com
+20230917	09:37:12	6678c98a-c72b-4c86-84a7-c666056d8ae3	Error: Not allowed by CORS	GET	/	https://www.shutterstock.com
+20230921	14:58:17	a4ceea8e-8550-4871-98d3-c3c86638eb0d	Error: Cannot set headers after they are sent to the client	PATCH	/users	undefined
+20230921	15:02:17	aa9400f2-63db-47ea-b20d-d68c0d74b045	Error: Cannot set headers after they are sent to the client	PATCH	/users	undefined
+20230922	23:26:01	eb7335a6-c3e6-49d7-9ba8-7dbb335702fe	Error: Cannot set headers after they are sent to the client	PATCH	/users	undefined
+20230922	23:26:17	08f7685a-2192-4add-ae2e-fb28d3bf80fc	Error: Cannot set headers after they are sent to the client	PATCH	/users	undefined
+20230922	23:27:08	b6df4dbc-6310-425c-975b-1f5f6d9df048	Error: Cannot set headers after they are sent to the client	PATCH	/users	undefined
+20230922	23:28:28	c68f9f78-1c68-4632-aea1-e4b85480b869	TypeError: Cannot set properties of null (setting 'username')	PATCH	/users	undefined
