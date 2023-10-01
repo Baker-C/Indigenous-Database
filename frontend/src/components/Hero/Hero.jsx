@@ -27,8 +27,8 @@ const Hero = () => {
 
 const HeroTitle = ({ children }) => {    
     return (
-        <div class={HeroCSS.titleContainer}>
-            <h1 class={HeroCSS.title}>
+        <div className={HeroCSS.titleContainer}>
+            <h1 className={HeroCSS.title}>
                 {children}
             </h1>
         </div>
@@ -37,8 +37,8 @@ const HeroTitle = ({ children }) => {
 
 const HeroText = ({ children }) => {    
     return (
-        <div class={HeroCSS.textContainer}>
-            <p class={HeroCSS.text}>
+        <div className={HeroCSS.textContainer}>
+            <p className={HeroCSS.text}>
                 {children}
             </p>
         </div>

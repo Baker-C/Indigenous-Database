@@ -24,26 +24,24 @@
     border-top: 2px solid rgb(var(--accent-rgb));
     height: 100%;
     width: 100%;
-    color: var(--heading-color);
     position: relative;
     padding-top: 13.5px;
-    backdrop-filter: blur(1px);
+    background-image: linear-gradient(rgba(var(--accent-rgb),.4) 65%, rgba(var(--accent-rgb),.05));
     font-family: var(--text-font);
     font-size: 15px;
     text-transform: uppercase;
     text-decoration: none;
+    overflow: hidden;
+    transition-duration: 1s;
+    color: white;
 }
 
-    .content:hover {
-        background-color: rgba(var(--accent-rgb),.5);
-        border-end-end-radius: 50px;
-        border-end-start-radius: 50px;
-        transition-duration: var(--transition-duration);
-    }
-
-.activePage {
-    background-color: rgba(var(--accent-rgb),.5);
-    color: rgb(var(--accent-rgb));
+.hidden {
+    height: 0;
+    margin-bottom: 50px;
+    transition-duration: 1s;
+    margin-top: 13.5px;
+    padding: 0;
 }
 
 /* top nav screen size response */
