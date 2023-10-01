@@ -22,11 +22,11 @@
 
 .content {
     border-top: 2px solid rgb(var(--accent-rgb));
+    border-bottom: 2px solid rgb(var(--accent-rgb));
     height: 100%;
     width: 100%;
     position: relative;
     padding-top: 13.5px;
-    background-image: linear-gradient(rgba(var(--accent-rgb),.4) 65%, rgba(var(--accent-rgb),.05));
     font-family: var(--text-font);
     font-size: 15px;
     text-transform: uppercase;
@@ -34,7 +34,17 @@
     overflow: hidden;
     transition-duration: 1s;
     color: white;
+    backdrop-filter: blur(2px);
+    text-shadow:
+        1px 1px 0 black,
+        -1px 1px 0 black,
+        -1px -1px 0 black,
+        1px -1px 0 black;
 }
+
+    .content:hover {
+        background-color: rgb(var(--accent-rgb), .3);
+    }
 
 .hidden {
     height: 0;

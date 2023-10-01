@@ -44,7 +44,7 @@ const ContentBox = (props) => {
             <h2 className={HomeSection1CSS.heading}>
                 { heading }
             </h2>
-            <Arrow>/assets/rightarrow.svg</Arrow>
+            <Arrow>/assets/circlearrow.svg</Arrow>
             <p className={HomeSection1CSS.text}>
                 { text }
             </p>

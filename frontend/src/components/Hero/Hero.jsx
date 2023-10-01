@@ -19,6 +19,9 @@ const Hero = () => {
                 Search through our collections of sources, organizations, and opportunities
             </HeroText>
             <SearchButton />
+            <SwipeIcon>
+                /assets/droparrow.svg
+            </SwipeIcon>
         </div>
     )
 }
@@ -48,6 +51,12 @@ const HeroText = ({ children }) => {
 const SearchButton = () => {
     return (
         <button type="button" className={HeroCSS.searchButton}>Start Your Search Today</button>
+    )
+}
+
+const SwipeIcon = ({ children }) => {
+    return (
+        <img src={children} className={HeroCSS.swipeIcon} />
     )
 }
 

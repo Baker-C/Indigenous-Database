@@ -49,7 +49,7 @@ const Button = ({ children }) => {
                 <p>{children}</p>
             </div>
             <div className={GroupBannerCSS.arrowContainer}>
-                <img src='/assets/rightarrow.svg' className={GroupBannerCSS.arrow} />
+                <img src='/assets/arrow.svg' className={GroupBannerCSS.arrow} />
             </div>
         </Link>
     )

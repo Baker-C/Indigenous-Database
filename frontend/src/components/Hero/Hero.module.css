@@ -5,7 +5,7 @@
     display: flex;
     flex-direction: column;
     justify-content: space-around;
-    padding: 30vh 0;
+    padding: 30vh 0 40vh 0;
     height: 130vh;
     background-size: auto 1290px;
     background-image: url('../../../public/assets/bg.jpg');
@@ -50,16 +50,24 @@
 }
 
 .searchButton {
-    height: fit-content;
-    width: 40%;
-    outline: none;
+    height: 50px;
+    width: 300px;
+    border: none;
     margin: 0 auto;
     padding: 10px 0;
     font-size: 15px;
     font-family: var(--heading-font);
-    background-color: rbg(var(--accent-rgb));
+    background-color: rgb(var(--accent-rgb));
+    border-radius: 25px;
     color: white;
+    transition-duration: var(--transition-duration);
 }
+
+    .searchButton:hover {
+        background-color: rgba(var(--accent-rgb), .9);
+        transition-delay: 200ms;
+        transition-duration: var(--transition-duration);
+    }
 
 
 @media screen and (max-width: 800px) {
@@ -80,4 +88,25 @@
     .text {
         font-size: 20px;
     }
+}
+
+@keyframes move {
+    0% {transform: translate(0) rotate(180deg)}
+    50% {transform: translate(0, 5px) rotate(180deg)}
+    100% {transform: translate(0) rotate(180deg)}
+}
+
+@-webkit-keyframes move {
+    0% {transform: translate(0) rotate(180deg)}
+    50% {transform: translate(0, 5px) rotate(180deg)}
+    100% {transform: translate(0) rotate(180deg)}
+}
+
+.swipeIcon {
+    position: fixed;
+    transform: translate(0, 10000px) rotate(180deg);
+    bottom: 0;
+    left: 47.5%;
+    width: 5%;
+    animation: move 1.5s ease-in-out .1s 5;
 }
