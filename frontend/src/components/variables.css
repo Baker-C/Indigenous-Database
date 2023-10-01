@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css?family=Julius+Sans+One|Barlow&display=swap");
+@import url("https://fonts.googleapis.com/css?family=Archivo:wght@200|Poppins&display=swap");
 
 :root {
     /* Generic */
@@ -22,8 +22,8 @@
     --text-color: #DDD;
     --subtext-color: #BBB;
 
-    --heading-font: 'Julius Sans One', serif;
-    --text-font: 'Barlow', serif;
+    --heading-font: 'Archivo', serif;
+    --text-font: 'Poppins', serif;
 
     /* Element Variables */
 
@@ -35,7 +35,7 @@
 .heading {
     color: #222;
     font-family: var(--heading-font);
-    font-size: 28px;
+    font-size: 32px;
 }
 
 .text {
