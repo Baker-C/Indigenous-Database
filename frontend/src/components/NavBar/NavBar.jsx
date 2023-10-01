@@ -3,6 +3,7 @@ import { NavLink } from 'react-router-dom'
 import NavBarCSS from './NavBar.module.css'
 
 const NavBar = (props) => {
+// makes navbar stick to top after scrolling down
     const [sticky, setSticky] = useState(false)
 
     const stickyNavbar = () => {
@@ -15,31 +16,47 @@ const NavBar = (props) => {
     window.addEventListener('scroll', stickyNavbar)
 
     // makes classeNames more readable in <nav>
+    const notStuck = `${NavBarCSS.navbar} ${NavBarCSS.notColored}`
     const stuck = `${NavBarCSS.navbar} ${NavBarCSS.stuck}`
-    const notStuck = `${NavBarCSS.navbar}`
     
     return (
-        <div className={NavBarCSS.navbarContainer}>
-            <nav className={sticky ? stuck : notStuck}>
-                <NavOption>literature</NavOption>
-                <NavOption>culture</NavOption>
-                <NavOption>arts</NavOption>
-                <NavOption>search</NavOption>
-                <NavOption>employment</NavOption>
-                <NavOption>academics</NavOption>
-                <NavOption>contact</NavOption>
-            </nav>
-        </div>
+        <nav className={sticky ? stuck : notStuck}>
+            <NavOption>literature</NavOption>
+            <NavOption>culture</NavOption>
+            <NavOption>arts</NavOption>
+            <NavOption>search</NavOption>
+            <NavOption>employment</NavOption>
+            <NavOption>academics</NavOption>
+            <NavOption>contact</NavOption>
+        </nav>
     )
 }
 
 
 
 const NavOption = ({ children }) => {
+//hides navlinks on scroll down
+    const [hide, setHide] = useState(false)
+    const [prevPos, setPrevPos] = useState(window.scrollY)
+
+    const hideNav = () => {
+        const currentScrollPos = window.scrollY 
+        if (currentScrollPos >= prevPos) {
+            setHide(true)
+        } else {
+            setHide(false)
+        }
+        setPrevPos(currentScrollPos)
+    }
+    window.addEventListener('scroll', hideNav)
+
+    const visible = `${NavBarCSS.content}`
+    const hidden = `${NavBarCSS.content} ${NavBarCSS.hidden}`
+
     return (
         <NavLink 
             to={`/${children}.html`} 
-            className={NavBarCSS.content} 
+            className={hide ? hidden : visible} 
             activeClassName={NavBarCSS.activePage}
         >
             {children}
