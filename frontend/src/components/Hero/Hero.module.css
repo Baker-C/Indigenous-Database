@@ -29,11 +29,11 @@
 }
 
 .title {
-    font-size: 40px;
+    font-size: 47px;
     font-family: var(--heading-font);
-    text-transform: uppercase;
+    text-transform: capitalize;
     line-height: 70px;
-    letter-spacing: .2vw;
+    letter-spacing: .4vw;
 }
 
 .textContainer {
