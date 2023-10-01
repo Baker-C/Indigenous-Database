@@ -1,0 +1,27 @@
+@import './../variables.css';
+
+.container {
+    background-color: rgb(var(--accent-rgb));
+    padding: 30px 13%;
+    width: 100%;
+    display: grid;
+    grid-template-columns: 60% 1fr;
+    grid-template-rows: 60% 1fr;
+    grid-template-areas: 
+        'title content'
+        'title button';
+}
+
+.title {
+    grid-area: title;
+    color: white;
+}
+
+.content {
+    grid-area: content;
+    color: white;
+}
+
+.button {
+    grid-area: button;
+}

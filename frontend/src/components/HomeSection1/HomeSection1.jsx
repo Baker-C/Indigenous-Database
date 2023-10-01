@@ -1,4 +1,5 @@
 import React from 'react'
+import { Link } from 'react-router-dom'
 import HomeSection1CSS from './HomeSection1.module.css'
 import './../variables.css'
 
@@ -39,7 +40,7 @@ const ContentBox = (props) => {
     const { heading, text } = props
 
     return (
-        <label className={HomeSection1CSS.contentContainer}>
+        <Link to="" className={HomeSection1CSS.contentContainer}>
             <h2 className={HomeSection1CSS.heading}>
                 { heading }
             </h2>
@@ -47,7 +48,7 @@ const ContentBox = (props) => {
             <p className={HomeSection1CSS.text}>
                 { text }
             </p>
-        </label>
+        </Link>
     )
 }
 
