@@ -20,7 +20,7 @@ const Hero = () => {
             </HeroText>
             <SearchButton />
             <SwipeIcon>
-                /assets/arrow.svg
+                /assets/droparrow.svg
             </SwipeIcon>
         </div>
     )

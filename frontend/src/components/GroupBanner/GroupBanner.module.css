@@ -57,7 +57,7 @@
 .arrowContainer {
     width: 20px;
     visibility: hidden;
-    transform: translate(15px, 2px);
+    transform: translate(10px, 2px);
     transition-duration: var(--transition-duration);
 }
 
