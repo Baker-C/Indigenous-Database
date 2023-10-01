@@ -1,18 +1,21 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
 import HeaderCSS from './Header.module.css'
+import './../variables.css'
 
 const Header = () => {
 
     return (
+        
         <header className={HeaderCSS.header}>
-            <HeaderLogo 
-                image={"/assets/icon_placeholder.svg"}
-            />
-            <HeaderTitle 
-                title={"INDIGENOUS DATABASE"}
-                subtext={"PROVIDED BY ~ OIC LEARNING COLLECTIVE"}
-            /> 
+            <HeaderLogo>/assets/icon_placeholder.svg</HeaderLogo>
+            <HeaderTitle>
+                Indigenous Database
+            </HeaderTitle> 
+            <HeaderSubText>
+                Provided By ~ OIC Learning Collective
+            </HeaderSubText>
+
             <div className={HeaderCSS.optionsContainer}>
                 <AccountOption>signup</AccountOption>
                 <AccountOption>login</AccountOption>
@@ -27,19 +30,20 @@ const Header = () => {
 const HeaderLogo = ({ children }) => {
     return (
         <div className={HeaderCSS.logoContainer}>
-            <img className={HeaderCSS.logo} src="/assets/icon_placeholder.svg"/>
+            <img className={HeaderCSS.logo} src={children} />
         </div>
     )
 }
 
-const HeaderTitle = (props) => {
-    const { title, subtext } = props
-
+const HeaderTitle = ({ children }) => {
     return (
-        <div className={HeaderCSS.titleContainer}>
-            <h1 className={HeaderCSS.title}>{title}</h1>
-            <p className={HeaderCSS.subtext}>{subtext}</p>
-        </div>
+        <h1 className={HeaderCSS.title}>{children}</h1>
+    )
+}
+
+const HeaderSubText = ({ children }) => {
+    return (
+        <p className={`HeaderCSS.subtext} subtext`}>{children}</p>
     )
 }
 
