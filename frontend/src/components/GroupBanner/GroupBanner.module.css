@@ -1,0 +1,85 @@
+@import './../variables.css';
+
+.container {
+    background-color: rgb(var(--accent-rgb));
+    padding: 30px 13%;
+    width: 100%;
+    display: grid;
+    grid-template-columns: 60% 1fr 1fr;
+    grid-template-rows: 50% 1fr;
+    grid-template-areas: 
+        'title content content'
+        'title link button';
+    align-items: center;
+}
+
+.title {
+    grid-area: title;
+    color: white;
+    font-size: var(--heading-size);
+    font-family: var(--heading-font);
+    text-wrap: balance;
+}
+
+.content {
+    grid-area: content;
+    color: white;
+    font-size: var(--text-size);
+    font-family: var(--text-font);
+}
+
+.button {
+    grid-area: button;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    height: 30px;
+    width: 150px;
+    background-color: white;
+    border-radius: 15px;
+    align-items: center;
+    padding-top: 2px;
+    text-decoration: none;
+}
+
+.buttonText {
+    color: rgb(var(--accent-rgb));
+    font-size: var(--text-size);
+    font-family: var(--text-font);
+    transform: translate(15px, -1px);
+    transition-duration: var(--transition-duration);
+}
+    .button:hover > .buttonText {
+        transform: translate(1px, -1px);
+        transition-duration: var(--transition-duration);
+    }
+
+.arrowContainer {
+    width: 20px;
+    visibility: hidden;
+    transform: translate(15px, 2px);
+    transition-duration: var(--transition-duration);
+}
+
+    .button:hover > .arrowContainer {
+        visibility: visible;
+        transform: translate(0px, 2px);
+        transition-duration: var(--transition-duration);
+    }
+
+.createContainer {
+    grid-area: link;
+    height: 30px;
+    color: #CCC;
+    text-align: start;
+    text-decoration: underline;
+    transform: translate(0, 3px);
+    font-size: var(--text-size);
+    font-family: var(--text-font);
+    transition-duration: var(--transition-duration);
+}
+
+    .createContainer:hover {
+        color: white;
+        transition-duration: var(--transition-duration);
+    }
