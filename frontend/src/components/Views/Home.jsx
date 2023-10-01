@@ -3,7 +3,7 @@ import Header from './../Header/Header'
 import NavBar from './../NavBar/NavBar'
 import Hero from './../Hero/Hero'
 import HomeSection1 from './../HomeSection1/HomeSection1'
-import HomeBanner from './../HomeBanner/HomeBanner'
+import HomeBanner from '../GroupBanner/GroupBanner'
 import Footer from './../Footer/Footer'
 import '../styles.css'
  

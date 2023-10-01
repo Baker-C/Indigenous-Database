@@ -54,7 +54,7 @@ const ContentBox = (props) => {
 
 const Arrow = ({ children }) => {
     return (
-        <div className={HomeSection1CSS.iconContainer}>
+        <div className={HomeSection1CSS.arrowContainer}>
             <img src={children} className={HomeSection1CSS.arrow} />
         </div>
     )
