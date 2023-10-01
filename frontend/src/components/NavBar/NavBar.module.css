@@ -15,21 +15,6 @@
     z-index: 98;
 }
 
-/*
-Not sure if I wanna add this, but I'll keep it
-in-case I wanna play with it later
-.navbar:before {
-    content:"";
-    background-color: lightslategrey;
-    position: absolute;
-    margin-top: -100px;
-    height: 165px;
-    width: 4000px;
-    left: -2000px;
-    z-index: -5;
-}
-*/
-
 .stuck {
     position: fixed;
     top: 0;

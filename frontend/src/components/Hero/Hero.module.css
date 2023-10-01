@@ -1,46 +1,66 @@
 @import "./../variables.css";
 
-.hero {
+.container {
     position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
     padding: 30vh 0;
-    height: 100vh;
-    background-size: max(100vw, 1900px) auto;
-    background-image: url('../../../public/assets/image-1.jpg');
+    height: 130vh;
+    background-size: auto 1290px;
+    background-image: url('../../../public/assets/bg.jpg');
+    background-color: rgba(88, 100, 100, 0.66);
+    background-blend-mode: darken;
     background-position-y: var(--bg-position);
-    background-position-x: 0;
+    background-position-x: center;
     background-attachment: fixed;
     text-align: center;
+    color: white;
 }
 
 
 .titleContainer {
     position: relative;
     height: fit-content;
-    width: 60%;
+    width: 55%;
     word-wrap: normal;
     margin: 0 auto;
-    top: -20px;
+    top: 40px;
 }
 
 .title {
-    font-size: 35px;
+    font-size: 40px;
     font-family: var(--heading-font);
     text-transform: uppercase;
-    line-height: 40px;
+    line-height: 70px;
+    letter-spacing: .2vw;
 }
 
 .textContainer {
     height: fit-content;
-    width: 40%;
+    width: 45%;
     margin: 0 auto;
     word-wrap: normal;
 }
 
 .text {
-    font-size: 25px;
+    font-size: 28px;
     font-family: var(--heading-font);
-    line-height: 30px;
+    line-height: 40px;
 }
+
+.searchButton {
+    height: fit-content;
+    width: 40%;
+    outline: none;
+    margin: 0 auto;
+    padding: 10px 0;
+    font-size: 15px;
+    font-family: var(--heading-font);
+    background-color: rbg(var(--accent-rgb));
+    color: white;
+}
+
 
 @media screen and (max-width: 800px) {
     .titleContainer {

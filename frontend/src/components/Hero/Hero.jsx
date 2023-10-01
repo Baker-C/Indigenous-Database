@@ -6,19 +6,19 @@ const Hero = () => {
         
     const changeBGPosition = () => {
         const scrollDist = window.scrollY
-        document.documentElement.style.setProperty('--bg-position', (scrollDist*(-1.5))+"px")
+        document.documentElement.style.setProperty('--bg-position', (scrollDist*(-1.4))+"px")
     }
     window.addEventListener('scroll', changeBGPosition)
 
     return (
-        <div className={HeroCSS.hero}>
+        <div className={HeroCSS.container}>
             <HeroTitle>
-                SIMPLY NAVIGATE THROUGH THE MODERN INDIGENOUS WORLD
+                modern indigenous resources all in one place
             </HeroTitle>
             <HeroText>
-                Search through our collection of resources, organizations, and indigenous works
+                Search through our collections of sources, organizations, and opportunities
             </HeroText>
-            <SearchBar />
+            <SearchButton />
         </div>
     )
 }
@@ -42,6 +42,12 @@ const HeroText = ({ children }) => {
                 {children}
             </p>
         </div>
+    )
+}
+
+const SearchButton = () => {
+    return (
+        <button type="button" className={HeroCSS.searchButton}>Start Your Search Today</button>
     )
 }
 
