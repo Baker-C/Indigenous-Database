@@ -60,13 +60,12 @@
     background-color: rgb(var(--accent-rgb));
     border-radius: 25px;
     color: white;
-    transition-duration: var(--transition-duration);
+    transition-duration: 600ms;
 }
 
     .searchButton:hover {
-        background-color: rgba(var(--accent-rgb), .9);
-        transition-delay: 200ms;
-        transition-duration: var(--transition-duration);
+        background-color: rgba(var(--accent-rgb), .8);
+        transition-duration: 600ms;
     }
 
 

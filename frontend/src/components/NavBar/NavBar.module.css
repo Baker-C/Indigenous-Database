@@ -44,6 +44,7 @@
 
     .content:hover {
         background-color: rgb(var(--accent-rgb), .3);
+        transition-duration: var(--transition-duration);
     }
 
 .hidden {
