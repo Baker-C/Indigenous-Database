@@ -1,7 +1,7 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
 import GroupBannerCSS from './GroupBanner.module.css'
-import './../variables.css'
+import ArrowButton from './../ArrowButton/ArrowButton'
 
 const GroupBanner = () => {
     return (
@@ -15,12 +15,14 @@ const GroupBanner = () => {
             <Create>
                 Create a group
             </Create>
-            <Button>
+            <ArrowButton>
                 Join a group
-            </Button>
+            </ArrowButton>
         </div>
     )
 }
+
+
 
 const Title = ({ children }) => {
     return (
@@ -39,19 +41,6 @@ const Create = ({ children }) => {
         <div className={GroupBannerCSS.createContainer}>
             {children}
         </div>
-    )
-}
-
-const Button = ({ children }) => {
-    return (
-        <Link className={GroupBannerCSS.button}>
-            <div className={GroupBannerCSS.buttonText}>
-                <p>{children}</p>
-            </div>
-            <div className={GroupBannerCSS.arrowContainer}>
-                <img src='/assets/arrow.svg' className={GroupBannerCSS.arrow} />
-            </div>
-        </Link>
     )
 }
 

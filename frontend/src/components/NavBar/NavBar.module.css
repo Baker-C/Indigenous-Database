@@ -20,9 +20,8 @@
     top: 0;
 }
 
-.content {
-    border-top: 2px solid rgb(var(--accent-rgb));
-    border-bottom: 2px solid rgb(var(--accent-rgb));
+.content {    
+    border-bottom: 3px solid rgb(var(--accent-rgb));
     height: 100%;
     width: 100%;
     position: relative;
@@ -34,7 +33,7 @@
     overflow: hidden;
     transition-duration: 1s;
     color: white;
-    backdrop-filter: blur(2px);
+    backdrop-filter: blur(3px);
     text-shadow:
         1px 1px 0 black,
         -1px 1px 0 black,

@@ -1,0 +1,41 @@
+@import './../variables.css';
+
+.button {
+    grid-area: button;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    height: ;
+    width: fit-content;
+    padding: 0 23px 0 10px;
+    background-color: white;
+    border-radius: 35px;
+    align-items: center;
+    text-align: center;
+    text-decoration: none;
+}
+
+.buttonText {
+    color: rgb(var(--accent-rgb));
+    font-size: var(--text-size);
+    font-family: var(--text-font);
+    transform: translate(15px, -1px);
+    transition-duration: var(--transition-duration);
+}
+    .button:hover > .buttonText {
+        transform: translate(2px, -1px);
+        transition-duration: var(--transition-duration);
+    }
+
+.arrowContainer {
+    width: 20px;
+    opacity: 0;
+    transform: translate(15px, 2px);
+    transition-duration: var(--transition-duration);
+}
+
+    .button:hover > .arrowContainer {
+        opacity: 1;
+        transform: translate(5px, 2px);
+        transition-duration: var(--transition-duration);
+    }

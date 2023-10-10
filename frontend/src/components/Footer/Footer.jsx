@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import FooterCSS from './Footer.module.css'
 
 const Footer = () => {
+    // here lies the hard coded names and links
     const columns = [
         { title: 'column 1', links: [
             { text: 'Home', linkedTo: '' },
@@ -39,11 +40,15 @@ const Footer = () => {
     ]
 
     return (
+    // maps through columns, 
+    // then maps through the links in each column
         <section className={FooterCSS.container}>
+
             {columns.map((column) => {
                 return (
                     <div className={FooterCSS.linkContainer}>
-                        <ColumnTitle> {column.title} </ColumnTitle>
+                        <ColumnTitle title={column.title} />
+
                         {column.links.map((link) => {
                             return (
                                 <ColumnLink text={link.text} linkedTo={link.linkedTo} />
@@ -58,16 +63,15 @@ const Footer = () => {
 
 
 
-const ColumnTitle = ({ children }) => {
+const ColumnTitle = ({ title }) => {
     return (
         <h1 className={FooterCSS.title}>
-            {children}
+            {title}
         </h1>
     )
 }
 
-const ColumnLink = (props) => {
-    const { text, linkedTo } = props
+const ColumnLink = ({ text, linkedTo }) => {
     return (
         <Link className={FooterCSS.link} to={linkedTo}>
             {text}
