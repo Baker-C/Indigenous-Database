@@ -6,7 +6,7 @@
     flex-direction: row;
     height: fit-content;
     align-items: center;
-    margin: 60px;
+    margin: 120px 0;
 }
 
 .iconList {
@@ -34,7 +34,6 @@
     margin-top: 5%;
     padding: 3%; 
     padding-left: calc(400px);
-    background-color: black;
 }
 
 .image {
@@ -43,4 +42,37 @@
     left: 3%;
     width: 300px;
     height: 180%;
+    animation: loadIn ease 1s 1;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 10px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
+@keyframes loadIn {
+    0% {
+        opacity: 0.3;
+        transform: translateX(30px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateX(0px);
+    }
+}
+
+.books {
+    transition: ease-in 1s;
+    background-color: rgb(30, 30, 67);
+}
+
+.art {
+    transition: ease-in 1s;
+    background-color: rgb(40, 69, 40);
+}
+
+.articles {
+    transition: ease-in 1s;
+    background-color: rgb(80, 33, 33);
+}
+
+.music {
+    transition: ease-in 1s;
+    background-color: rgb(74, 39, 74);
 }

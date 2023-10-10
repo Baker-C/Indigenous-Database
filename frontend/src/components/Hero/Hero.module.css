@@ -90,22 +90,40 @@
 }
 
 @keyframes move {
-    0% {transform: translate(0) rotate(180deg)}
-    50% {transform: translate(0, 5px) rotate(180deg)}
-    100% {transform: translate(0) rotate(180deg)}
+    0% {
+        transform: translate(0) rotate(180deg);
+        opacity: 0; 
+    }
+    50% {
+        transform: translate(0, 5px) rotate(180deg);
+        opacity: 1;
+    }
+    100% {
+        transform: translate(0) rotate(180deg);
+        opacity: 0;
+    }
 }
 
 @-webkit-keyframes move {
-    0% {transform: translate(0) rotate(180deg)}
-    50% {transform: translate(0, 5px) rotate(180deg)}
-    100% {transform: translate(0) rotate(180deg)}
+    0% {
+        transform: translate(0) rotate(180deg);
+        opacity: 0;  
+    }
+    50% {
+        transform: translate(0, 5px) rotate(180deg);
+        opacity: 1;
+    }
+    100% {
+        transform: translate(0) rotate(180deg);
+        opacity: 0;
+    }
 }
 
 .swipeIcon {
     position: fixed;
-    transform: translate(0, 10000px) rotate(180deg);
     bottom: 0;
     left: 47.5%;
     width: 5%;
-    animation: move 1.5s ease-in-out .1s 5;
+    animation: move 2s ease-in-out .1s 5;
+    opacity: 0;
 }
