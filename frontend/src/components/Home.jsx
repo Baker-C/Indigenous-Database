@@ -2,6 +2,7 @@ import React from 'react'
 import Header from './Header/Header'
 import NavBar from './NavBar/NavBar'
 import Hero from './Hero/Hero'
+import Intro from './Intro/Intro'
 import HomeSwitcher from './HomeSwitcher/HomeSwitcher'
 import HomeBoxes from './HomeBoxes/HomeBoxes'
 import HomeBanner from './GroupBanner/GroupBanner'
@@ -17,9 +18,10 @@ const Home = () => {
                 <Header />
                 <NavBar />
                 <Hero />
+                <Intro />
                 <HomeSwitcher />
-                <HomeBanner />
                 <HomeBoxes />
+                <HomeBanner />
                 <Footer />
             </body>
         </html>
