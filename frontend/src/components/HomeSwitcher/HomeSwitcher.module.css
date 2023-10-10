@@ -6,7 +6,8 @@
     flex-direction: row;
     height: fit-content;
     align-items: center;
-    margin: 120px 0;
+    padding: 120px 0;
+    background: rgba(var(--bg-3-rgb));
 }
 
 .iconList {
@@ -20,7 +21,12 @@
 .icon {
     width: 80px;
     margin: 15px 0;
+    outline-color: none;
 }
+
+    .icon:focus {
+        outline: none;
+    }
 
 .contentContainer {
     position: relative;
@@ -36,14 +42,21 @@
     padding-left: calc(400px);
 }
 
-.image {
+.imageContainer {
     position: absolute;
+    display: flex;
+    justify-content: center;
     top: -55%;
     left: 3%;
     width: 300px;
     height: 180%;
-    animation: loadIn ease 1s 1;
+    overflow: hidden;
+    animation: loadIn ease 500ms 1;
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 10px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
+.image {
+    height: 100%;
 }
 
 @keyframes loadIn {
@@ -58,21 +71,21 @@
 }
 
 .books {
-    transition: ease-in 1s;
+    transition: ease-in 500ms;
     background-color: rgb(30, 30, 67);
 }
 
 .art {
-    transition: ease-in 1s;
+    transition: ease-in 500ms;
     background-color: rgb(40, 69, 40);
 }
 
 .articles {
-    transition: ease-in 1s;
+    transition: ease-in 500ms;
     background-color: rgb(80, 33, 33);
 }
 
 .music {
-    transition: ease-in 1s;
+    transition: ease-in 500ms;
     background-color: rgb(74, 39, 74);
 }

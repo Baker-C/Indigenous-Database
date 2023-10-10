@@ -70,29 +70,27 @@ const View = ({ content, view }) => {
 
     var color = `${HomeSwitcherCSS.contentContainer} ${HomeSwitcherCSS.books}`
     switch(content.id) {
-        case 1:
-            color = `${HomeSwitcherCSS.contentContainer} ${HomeSwitcherCSS.books}`
+        case 1: color = `${HomeSwitcherCSS.contentContainer} ${HomeSwitcherCSS.books}`
             break
-        case 2:
-            color = `${HomeSwitcherCSS.contentContainer} ${HomeSwitcherCSS.art}`
+        case 2: color = `${HomeSwitcherCSS.contentContainer} ${HomeSwitcherCSS.art}`
             break
-        case 3:
-            color = `${HomeSwitcherCSS.contentContainer} ${HomeSwitcherCSS.articles}`
+        case 3: color = `${HomeSwitcherCSS.contentContainer} ${HomeSwitcherCSS.articles}`
             break
-        case 4:
-            color = `${HomeSwitcherCSS.contentContainer} ${HomeSwitcherCSS.music}`
+        case 4: color = `${HomeSwitcherCSS.contentContainer} ${HomeSwitcherCSS.music}`
     }
 
     return (
-        <div className={color}>
+        <div id="viewContent" className={color}>
             <p>{content.name}</p>
             <p>{content.text}</p>
             <ArrowButton>Start your search</ArrowButton>
-            <img 
-                className={HomeSwitcherCSS.image}
-                src={content.image} 
-                alt="" 
-            />
+            <div className={HomeSwitcherCSS.imageContainer}>
+                <img 
+                    className={HomeSwitcherCSS.image}
+                    src={content.image} 
+                    alt="" 
+                />
+            </div>
         </div>
     )
 }

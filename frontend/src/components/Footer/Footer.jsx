@@ -57,6 +57,10 @@ const Footer = () => {
                     </div>
                 )
             })}
+            <div className={FooterCSS.bottomText}>
+                <p> CopyRight OIC Learning Collective 2023</p>
+                <p>Accessibility Statement | Cyber Security | Terms of Use | Cookies | Privacy</p>
+            </div>
         </section>
     )
 }

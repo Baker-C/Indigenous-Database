@@ -9,7 +9,7 @@
     width: 100%;
     margin: 0;
     padding: 5%;
-    outline: 1px solid red;
+    padding-left: 15%;
 }
 
 .linkContainer {
@@ -17,12 +17,14 @@
     flex-direction: column;
     justify-content: space-evenly;
     width: 100%;
-    height: 90%
+    height: 90%;
+    padding-left: 15px;
+    border-left: 2px solid rgb(var(--accent-rgb));
 }
 
 .title {
     font-family: var(--heading-font);
-    font-size: 22px;
+    font-size: 18px;
     color: #222;
     text-transform: uppercase;
 }
@@ -41,3 +43,18 @@
         text-decoration: underline;
         transition-duration: var(--transition-duration);
     }
+
+.bottomText {
+    position: absolute;
+    text-align: center;
+    bottom: 0;
+    left: 25%;
+    width: 50%;
+    height: fit-content;
+    font-family: var(--text-font);
+    font-size: 10px;
+    color: #222;
+    border-top: 3px solid rgb(var(--accent-rgb));
+    text-decoration: none;
+    text-transform: capitalize;
+}

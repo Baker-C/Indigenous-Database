@@ -44,7 +44,7 @@
 }
 
     .contentContainer:hover, label:active, input:hover+label, input:active+label {
-        outline: 1px solid #222;
+        outline: 1px solid rgb(var(--accent-rgb));
         transition-duration: var(--transition-duration);
     }
 

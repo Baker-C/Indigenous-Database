@@ -21,37 +21,63 @@
 }
 
 .content {    
-    border-bottom: 3px solid rgb(var(--accent-rgb));
+    position: relative;
     height: 100%;
     width: 100%;
-    position: relative;
     padding-top: 13.5px;
     font-family: var(--text-font);
     font-size: 15px;
     text-transform: uppercase;
     text-decoration: none;
     overflow: hidden;
-    transition-duration: 1s;
     color: white;
+    border-bottom: 3px solid rgb(var(--accent-rgb));
     backdrop-filter: blur(3px);
     text-shadow:
         1px 1px 0 black,
         -1px 1px 0 black,
         -1px -1px 0 black,
         1px -1px 0 black;
-}
+    transition-duration: var(--transition-duration);
+    }
 
-    .content:hover {
-        background-color: rgb(var(--accent-rgb), .3);
-        transition-duration: var(--transition-duration);
+    .content::after {
+        content: '';
+        position: absolute;
+        width: 120%;
+        height: 3px;
+        top: 0;
+        left: -10%;
+        background: rgb(var(--accent-rgb));
+        scale: 0 1;
+        transition: 
+            scale 300ms 100ms,
+            translate 500ms 200ms;
+    }
+
+    .content:hover::after {
+        scale: 1 1;
+    }
+
+    .content:hover + .content::after {
+        translate: -100%;
+        transition: 
+            scale 300ms 200ms,
+            translate 500ms 100ms;
+    }
+
+    .content:has(+ :hover)::after {
+        translate: 100%;
+        transition: 
+            scale 300ms 200ms,
+            translate 500ms 100ms;
     }
 
 .hidden {
     height: 0;
-    margin-bottom: 62px;
-    transition-duration: 1s;
-    margin-top: 13.5px;
     padding: 0;
+    margin-bottom: 62px;
+    transition-duration: 750ms;
 }
 
 /* top nav screen size response */

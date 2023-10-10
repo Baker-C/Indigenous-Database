@@ -1,7 +1,7 @@
 @import './../variables.css';
 
 .container {
-    background-color: rgb(var(--accent-rgb));
+    background-color: rgb(var(--bg-3-rgb));
     padding: 30px 13%;
     width: 100%;
     display: grid;
@@ -15,7 +15,7 @@
 
 .title {
     grid-area: title;
-    color: white;
+    color: black;
     font-size: var(--heading-size);
     font-family: var(--heading-font);
     text-wrap: balance;
@@ -23,7 +23,7 @@
 
 .content {
     grid-area: content;
-    color: white;
+    color: black;
     font-size: var(--text-size);
     font-family: var(--text-font);
 }
@@ -31,7 +31,7 @@
 .createContainer {
     grid-area: link;
     height: 30px;
-    color: #CCC;
+    color: rgb(var(--accent-rgb));
     text-align: start;
     text-decoration: underline;
     transform: translate(0, 3px);
@@ -41,6 +41,6 @@
 }
 
     .createContainer:hover {
-        color: white;
+        color: #777;
         transition-duration: var(--transition-duration);
     }
