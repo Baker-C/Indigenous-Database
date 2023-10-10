@@ -8,7 +8,7 @@
     padding: 30vh 0 40vh 0;
     height: 130vh;
     background-size: auto 1290px;
-    background-image: url('../../../public/assets/bg.jpg');
+    background-image: url('./../../../public/assets/bg.jpg');
     background-color: rgba(88, 100, 100, 0.66);
     background-blend-mode: darken;
     background-position-y: var(--bg-position);

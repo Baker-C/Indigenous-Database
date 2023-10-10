@@ -1,12 +1,11 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
-import HomeSection1CSS from './HomeSection1.module.css'
-import './../variables.css'
+import HomeBoxesCSS from './HomeBoxes.module.css'
 
-const HeroSection1 = () => {
+const HomeBoxes = () => {
 
     return (
-        <section className={HomeSection1CSS.container}>
+        <section className={HomeBoxesCSS.container}>
             <Title>Find the sources you need to experience the indigenous world.</Title>
             <ContentBox 
                 heading="Search by categories"
@@ -29,23 +28,21 @@ const HeroSection1 = () => {
 
 const Title = ({ children }) => {
     return (
-        <div className={HomeSection1CSS.titleContainer}>
-            <h1 className={`heading ${HomeSection1CSS.title}`}>{children}</h1>
+        <div className={HomeBoxesCSS.titleContainer}>
+            <h1 className={`heading ${HomeBoxesCSS.title}`}>{children}</h1>
         </div>
     )
 }
 
 
-const ContentBox = (props) => {
-    const { heading, text } = props
-
+const ContentBox = ({ heading, text }) => {
     return (
-        <Link to="" className={HomeSection1CSS.contentContainer}>
-            <h2 className={HomeSection1CSS.heading}>
+        <Link to="" className={HomeBoxesCSS.contentContainer}>
+            <h2 className={HomeBoxesCSS.heading}>
                 { heading }
             </h2>
             <Arrow>/assets/circlearrow.svg</Arrow>
-            <p className={HomeSection1CSS.text}>
+            <p className={HomeBoxesCSS.text}>
                 { text }
             </p>
         </Link>
@@ -54,10 +51,10 @@ const ContentBox = (props) => {
 
 const Arrow = ({ children }) => {
     return (
-        <div className={HomeSection1CSS.arrowContainer}>
-            <img src={children} className={HomeSection1CSS.arrow} />
+        <div className={HomeBoxesCSS.arrowContainer}>
+            <img src={children} className={HomeBoxesCSS.arrow} />
         </div>
     )
 }
 
-export default HeroSection1
+export default HomeBoxes

@@ -2,7 +2,18 @@ import React, { useState } from 'react'
 import { NavLink } from 'react-router-dom'
 import NavBarCSS from './NavBar.module.css'
 
-const NavBar = (props) => {
+const NavBar = () => {
+    const navLinks = [
+        { text: 'literature', linkedTo: '' },
+        { text: 'culture', linkedTo: '' },
+        { text: 'arts', linkedTo: '' },
+        { text: 'search', linkedTo: '' },
+        { text: 'academics', linkedTo: '' },
+        { text: 'employment', linkedTo: '' },
+        { text: 'contact', linkedTo: '' }
+    ]
+
+
 // makes navbar stick to top after scrolling down
     const [sticky, setSticky] = useState(false)
 
@@ -21,20 +32,22 @@ const NavBar = (props) => {
     
     return (
         <nav className={sticky ? stuck : notStuck}>
-            <NavOption>literature</NavOption>
-            <NavOption>culture</NavOption>
-            <NavOption>arts</NavOption>
-            <NavOption>search</NavOption>
-            <NavOption>employment</NavOption>
-            <NavOption>academics</NavOption>
-            <NavOption>contact</NavOption>
+
+           {navLinks.map((link) => {
+                return (
+                    <NavOption
+                        text={link.text}
+                        link={link.linkedTo}
+                    />
+                )
+            })}
         </nav>
     )
 }
 
 
 
-const NavOption = ({ children }) => {
+const NavOption = ({ text, link }) => {
 //hides navlinks on scroll down
     const [hide, setHide] = useState(false)
     const [prevPos, setPrevPos] = useState(window.scrollY)
@@ -55,11 +68,11 @@ const NavOption = ({ children }) => {
 
     return (
         <NavLink 
-            to={`/${children}.html`} 
+            to={`/${link}.html`} 
             className={hide ? hidden : visible} 
             activeClassName={NavBarCSS.activePage}
         >
-            {children}
+            {text}
         </NavLink>
     )
 }

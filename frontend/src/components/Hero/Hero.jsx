@@ -1,5 +1,4 @@
 import React from 'react'
-import SearchBar from './../SearchBar/SearchBar'
 import HeroCSS from './Hero.module.css'
 
 const Hero = () => {
