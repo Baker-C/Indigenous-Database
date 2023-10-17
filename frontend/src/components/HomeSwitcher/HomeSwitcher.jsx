@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useRef, useEffect } from 'react'
 import HomeSwitcherCSS from './HomeSwitcher.module.css'
 import ArrowButton from './../ArrowButton/ArrowButton'
 
@@ -39,34 +39,30 @@ const HomeSwitcher = () => {
     ]
 
     const [view, setView] = useState(1)
-    const chooseView = (id) => {
-        setView(() => id)
-    }
+    const [cont, setCont] = useState(() => (content.filter(content => content.id === view)[0]))
+
+    useEffect(() => {
+        setCont(() => (content.filter(content => content.id === view)[0]))
+        console.log(cont)
+    }, [view])
 
     return (
             <section className={HomeSwitcherCSS.container}>
-                <IconList content={content} chooseView={chooseView}></IconList>
-                <View content={content} view={view}/>
+                <div className={HomeSwitcherCSS.iconList}>
+                    {content.map((content) => {
+                        return (
+                            <button onClick={() => setView(() => content.id)} className={HomeSwitcherCSS.iconButton}>
+                                <img src={content.icon}  alt="" className={HomeSwitcherCSS.icon} />
+                            </button>
+                        )
+                    })}
+                </div>
+                <View key={Math.random()} content={cont} />
             </section>
     )
 }
 
-const IconList = ({ content, chooseView }) => {
-    return (
-        <div className={HomeSwitcherCSS.iconList}>
-        {content.map((content) => {
-            return (
-                <label onClick={() => chooseView(content.id)} className={HomeSwitcherCSS.iconContainer}>
-                    <img src={content.icon}  alt="" className={HomeSwitcherCSS.icon} />
-                </label>
-            )
-        })}
-    </div>
-    )
-}
-
-const View = ({ content, view }) => {
-    content = content.filter(content => content.id === view)[0]
+const View = ({ content }) => {
 
     var color = `${HomeSwitcherCSS.contentContainer} ${HomeSwitcherCSS.books}`
     switch(content.id) {
@@ -80,7 +76,7 @@ const View = ({ content, view }) => {
     }
 
     return (
-        <div id="viewContent" className={color}>
+        <div className={color}>
             <p>{content.name}</p>
             <p>{content.text}</p>
             <ArrowButton>Start your search</ArrowButton>
@@ -88,7 +84,7 @@ const View = ({ content, view }) => {
                 <img 
                     className={HomeSwitcherCSS.image}
                     src={content.image} 
-                    alt="" 
+                    alt=""
                 />
             </div>
         </div>

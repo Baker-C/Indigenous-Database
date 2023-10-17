@@ -8,6 +8,7 @@
     align-items: center;
     padding: 120px 0;
     background: rgba(var(--bg-3-rgb));
+    
 }
 
 .iconList {
@@ -18,10 +19,19 @@
     width: fit-content;
 }
 
+.iconButton {
+    border: none;
+    background: none;
+}
+
+    .iconButton:active {
+        background: grey;
+        transition: background 300ms;
+    }
+
 .icon {
     width: 80px;
     margin: 15px 0;
-    outline-color: none;
 }
 
     .icon:focus {
@@ -40,6 +50,7 @@
     margin-top: 5%;
     padding: 3%; 
     padding-left: calc(400px);
+    animation: loadIn ease 500ms 1;
 }
 
 .imageContainer {
@@ -51,7 +62,6 @@
     width: 300px;
     height: 180%;
     overflow: hidden;
-    animation: loadIn ease 500ms 1;
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 10px 20px 0 rgba(0, 0, 0, 0.19);
 }
 
