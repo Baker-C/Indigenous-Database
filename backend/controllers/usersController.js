@@ -2,19 +2,38 @@ const User = require('../schemas/User')
 const asyncHandler = require('express-async-handler')
 const bcrypt = require('bcrypt')
 
-// @desc Get all users
+
+// @desc Get a single user
 // @route GET /users
 // @access Private
-const getAll = asyncHandler(async (req, res) => {
-    const users = await User.find().select('-password').lean()
-    if (!users?.length) {
-        return res.status(400).json({ message: 'No users found' })
+const get = asyncHandler(async (req, res) => {
+    const { username, password } = req.body
+
+    // returns all users if no username specified
+    if (!username) {
+        const users = await User.find().select('-password').lean()
+        if (users?.length) {
+            return res.json(users)
+        } else {
+            return res.status(400).json({ message: 'No users found' })
+        }
     }
-    res.json(users)
+
+    if (!username || !password ) {
+        return res.status(400).json({ message: 'A password is required if username is provided' })
+    }
+
+    const user = await User.find().select().lean()
+    if (!user) {
+        return res.status(400).json({ message: 'User not found' })
+    }
+    // check password
+    if (user.password === password) {
+        res.json(user)
+    } else {
+        res.status(400).json({ message: 'User password is incorrect' })
+    }
 })
-
-
-
 
 
 // @desc Create new user
@@ -54,31 +73,21 @@ const create = asyncHandler(async (req, res) => {
 })
 
 
-
-/*
-in the process of doing update functions
-need to find out how to confirm passwords 
-    and how to find duplicates based off username
-*/
-
-
 // @desc Update user
 // @route PATCH /users
 // @access Private
-const updateUserInfo = asyncHandler(async (req, res) => {
-    const { username, newUsername, newEmail, password } = req.body
+const update = asyncHandler(async (req, res) => {
+    const { username, password, newUsername, newEmail, newPassword } = req.body
 
     // Confirm data
-    if ( !username || !newUsername || !newEmail || !password ) {
-        return res.status(400).json({ message: 'A username, email, and password are required' })
+    if ( !username || !password || !newUsername || !newEmail || !newPassword ) {
+        return res.status(400).json({ message: 'A username, password, newUsername, newEmail, and newPassword are required' })
     }
 
     const user = await User.findOne({ username }).exec()
-
     if (!user) {
         return res.status(400).json({ message: 'User not found'})
     }
-
     if (password != user.password) {
         return res.status(400).json({ message: 'Incorrect Password'})
     }
@@ -91,7 +100,6 @@ const updateUserInfo = asyncHandler(async (req, res) => {
 
     // Check for duplicate
     const duplicate = await User.findOne({ newUsername }).lean().exec()
-
     // Allow updates to the original user
     if (duplicate && duplicate?.username.toString() == newUsername) {
         return res.status(409).json({ message: 'Duplicate username' })
@@ -100,61 +108,10 @@ const updateUserInfo = asyncHandler(async (req, res) => {
     user.username = newUsername
     user.email = newEmail
 
-    if (password) {
-
+    if (newPassword) {
         // Hash passwrd
-        user.password = await bcrypt.hash(password, 10) // Salt rounds = 10
+        user.password = await bcrypt.hash(newPassword, 10) // Salt rounds = 10
     }
-
-    // Confirm update
-    const updatedUser = await user.save()
-
-    res.json({ message: `${updatedUser.username} updated`})
-})
-
-// @desc Update user
-// @route PATCH /users
-// @access Private
-const updateUserPass = asyncHandler(async (req, res) => {
-    const { username, password, newPassword } = req.body
-
-    // Confirm data
-    if ( !username || !email || !password || !newPassword ) {
-        return res.status(400).json({ message: 'A username, email, and password are required' })
-    }
-
-    const user = await User.findOne({ username }).exec()
-
-    if (!user) {
-        return res.status(400).json({ message: 'User not found'})
-    }
-
-    if (password != user.password) {
-        return res.status(400).json({ message: 'Incorrect Password'})
-    }
-
-    /*
-    Need to make this an update email
-        Find user by username
-        Check pass is correct
-    */
-
-    // Check for duplicate
-    const duplicate = await User.findOne({ username }).lean().exec()
-
-    // Allow updates to the original user
-    if (duplicate && duplicate?.username.toString() !== email) {
-        return res.status(409).json({ message: 'Duplicate username' })
-    }
-
-    user.username = username
-    user.email = email
-
-    if (password) {
-        // Hash passwrd
-        user.password = await bcrypt.hash(password, 10) // Salt rounds = 10
-    }
-
     // Confirm update
     const updatedUser = await user.save()
 
@@ -164,7 +121,7 @@ const updateUserPass = asyncHandler(async (req, res) => {
 // @desc Delete user
 // @route DELETE /users
 // @access Private
-const deleteUser = asyncHandler(async (req, res) => {
+const remove = asyncHandler(async (req, res) => {
     const { username } = req.body
 
     if (!username) {
@@ -189,8 +146,8 @@ const deleteUser = asyncHandler(async (req, res) => {
 })
 
 module.exports = {
-    getAll,
+    get,
     create,
     update,
-    deleteUser
+    remove
 }

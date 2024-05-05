@@ -3,11 +3,9 @@ const router = express.Router()
 const booksController = require('../controllers/booksController')
 
 router.route('/')
-    .get(booksController.getAll)
+    .get(booksController.get)
     .post(booksController.create)
     .patch(booksController.update)
-    .patch(booksController.addGenres)
-    .patch(booksController.deleteGenres)
-    .delete(booksController.deleteBook)
+    .delete(booksController.remove)
 
 module.exports = router

@@ -1,40 +1,58 @@
-const Book = require('../models/Book')
+const Book = require('../schemas/Book')
 const asyncHandler = require('express-async-handler')
 
-const Genres = { fiction, nonfiction, historical, childrens,  }
 
-// @desc Get all books
+
+// @desc Get a single books
 // @route GET /books
 // @access Private
-const getAll = asyncHandler(async (req, res) => {
-    const books = await Book.find().select('-bookID').lean()
-    if (!books) {
-        return res.status(400).json({ message: 'No books found' })
+const get = asyncHandler(async (req, res) => {
+    const { id } = req.body
+
+    // return all if no ID specified
+    if (!id) {
+        const books = await Book.find().lean()
+        if (books?.length) {
+           return res.json(books)
+        } else {
+            return res.status(400).json({ message: 'No books found' })
+        }
     }
-    res.json(books)
+
+    const book = await Book.findOne().lean()
+    if (!book) {
+        return res.status(400).json({ message: 'Book not found' })
+    }
+    res.json(book)
 })
+
 
 // @desc Create new book
 // @route POST /books
 // @access Private
 const create = asyncHandler(async (req, res) => {
-    const { title, author, year } = req.body
+    const { title, author } = req.body
+
+    const titleLC = title.toLowerCase()
+    const authorLC = author.toLowerCase()
 
     // Confirm data
-    if (!title || !author) {
-        return res.status(400).json({ message: 'Title and Author are required' })
+    if ( !title || !author ) {
+        return res.status(400).json({ message: 'A title and author are required' })
     }
 
-    //Check for duplicates
-    const duplicate = await Book.findOne({ title, author }).lean().exec()
+    // Check for duplicates
+    const duplicate = await Book.findOne({ "title": titleLC, "author": authorLC }).lean().exec()
     if (duplicate) {
-        return res.status(400).json({ message: 'Duplicate entry found from Title and Author' })
+        return res.status(409).json({ message: 'Duplicate book found' })
     }
 
-    const bookObj = { title, author, year }
+    const bookObj = { "title": titleLC, "author": authorLC }
+    const book = await Book.create(bookObj)
 
-    if (bookObj) {
-        res.status(201).json({ message: `New book ${title} created` })
+    // Check for created
+    if (book) {
+        res.status(201).json({ message: `New book title: ${title} id: ${book._id} created` })
     } else {
         res.status(400).json({ message: 'Error creating book: Invalid book data recieved' })
     }
@@ -44,120 +62,62 @@ const create = asyncHandler(async (req, res) => {
 // @route PATCH /books
 // @access Private
 const update = asyncHandler(async (req, res) => {
-    const { title, author, year, genres } = req.body
+    const { id, title, author } = req.body
 
     // Confirm data
-    if (!title || !author) {
-        return res.status(400).json({ message: 'Title and Author are required' })
+    if ( !id || !title || !author ) {
+        return res.status(400).json({ message: 'An id, title, and author are required' })
     }
 
-    const book = await Book.findOne({ title, author }).exec()
-
+    const book = await Book.findOne({ id }).exec()
     if (!book) {
         return res.status(400).json({ message: 'Book not found'})
+    }
+
+    const titleLC = title.toLowerCase()
+    const authorLC = author.toLowerCase()
+    // Check for duplicate
+    const duplicate = await Book.findOne({ "title": titleLC, "author": authorLC }).lean().exec()
+    // Allow updates to the original book
+    if (duplicate && duplicate?.title.toString() == title && duplicate?.author.toString() == author) {
+        return res.status(409).json({ message: 'Duplicate title and author' })
     }
 
     book.title = title
     book.author = author
-    book.year = year
-    book.genres = genres
 
     // Confirm update
     const updatedBook = await book.save()
 
-    res.json({ message: `${updatedBook.ttile} updated`})
-})
-
-
-// updateGenres ?? req.body includes either "add" or "delete"
-
-// @desc Update book genres
-// @route PATCH /books
-// @access Private
-const addGenres = asyncHandler(async (req, res) => {
-    const { title, author, genres } = req.body
-
-    // Confirm data
-    if (!title || !author) {
-        return res.status(400).json({ message: 'Title and Author are required' })
-    }
-
-    const book = await Book.findOne({ title, author }).exec()
-
-    if (!book) {
-        return res.status(400).json({ message: 'Book not found'})
-    }
-    /*
-    add new genres to genre list if not already present
-    need to make a list of possible genres
-    - maybe do this through another API endpoint and schema?
-    -- find how to link them
-    - otherwise just do const list in codebase
-    */
-    book.genres = genres
-
-    // Confirm update
-    const updatedBook = await book.save()
-
-    res.json({ message: `${updatedBook.ttile} updated`})
-})
-
-// @desc Update book genres
-// @route PATCH /books
-// @access Private
-const deleteGenres = asyncHandler(async (req, res) => {
-    const { title, author, genres } = req.body
-
-    // Confirm data
-    if (!title || !author) {
-        return res.status(400).json({ message: 'Title and Author are required' })
-    }
-
-    const book = await Book.findOne({ title, author }).exec()
-
-    if (!book) {
-        return res.status(400).json({ message: 'Book not found'})
-    }
-    /*
-    remove given genres from genre list if not already present
-    add message in res if a genre is not found
-    - give list of all not found?
-    */
-    book.genres = genres
-
-    // Confirm update
-    const updatedBook = await book.save()
-
-    res.json({ message: `${updatedBook.ttile} updated`})
+    res.json({ message: `${updatedBook.title} updated`})
 })
 
 // @desc Delete book
 // @route DELETE /books
 // @access Private
-const deleteBook = asyncHandler(async (req, res) => {
-    const { title, author } = req.body
+const remove = asyncHandler(async (req, res) => {
+    const { id } = req.body
 
-    if (!title || !author) {
-        return res.status(400).json({ message: 'Book title & author is required'})
+    if (!id) {
+        return res.status(400).json({ message: 'Book id is required.'})
     }
 
-    const book = await Book.findByOne({title, author}).exec()
+    const book = await Book.findById(id).exec()
 
     // Check for book
     if (!book) {
-        return res.status(400).json({ message: 'Book not found' })
+        return res.status(400).json({ message: `${deletedBook} Book not found` })
     }
 
-    const deletedBook = await Book.findOneAndDelete().lean()
+    const deletedBook = await book.deleteOne()
 
-    res.json({ message: `Book ${deletedBook.title} by ${deletedBook.author} deleted` })
+    res.json({ message: `${deletedBook.title} deleted` })
 })
 
+
 module.exports = {
-    getAll,
+    get,
     create,
     update,
-    addGenres,
-    deleteGenres,
-    deleteBook
+    remove
 }
