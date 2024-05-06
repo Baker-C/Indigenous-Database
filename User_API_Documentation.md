@@ -77,3 +77,5 @@ The User API allows for user management operations such as fetching user details
   {
     "message": "User user1 deleted"
   }
+
+  
