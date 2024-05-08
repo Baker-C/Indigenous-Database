@@ -3,15 +3,16 @@ const asyncHandler = require('express-async-handler')
 
 
 
+
 // @desc Get a single books
 // @route GET /books
 // @access Private
 const get = asyncHandler(async (req, res) => {
-    const { id } = req.body
+    const { _id } = req.body
 
     // return all if no ID specified
-    if (!id) {
-        const books = await Book.find().lean()
+    if (!_id) {
+        const books = await Book.find().lean().exec()
         if (books?.length) {
            return res.json(books)
         } else {
@@ -19,7 +20,7 @@ const get = asyncHandler(async (req, res) => {
         }
     }
 
-    const book = await Book.findOne().lean()
+    const book = await Book.findOne().lean().exec()
     if (!book) {
         return res.status(400).json({ message: 'Book not found' })
     }
@@ -62,10 +63,10 @@ const create = asyncHandler(async (req, res) => {
 // @route PATCH /books
 // @access Private
 const update = asyncHandler(async (req, res) => {
-    const { id, title, author } = req.body
+    const { _id, title, author } = req.body
 
     // Confirm data
-    if ( !id || !title || !author ) {
+    if ( !_id || !title || !author ) {
         return res.status(400).json({ message: 'An id, title, and author are required' })
     }
 
@@ -77,7 +78,7 @@ const update = asyncHandler(async (req, res) => {
     const titleLC = title.toLowerCase()
     const authorLC = author.toLowerCase()
     // Check for duplicate
-    const duplicate = await Book.findOne({ "title": titleLC, "author": authorLC }).lean().exec()
+    const duplicate = await Book.findOne({ "title": titleLC, "author": authorLC }).exec()
     // Allow updates to the original book
     if (duplicate && duplicate?.title.toString() == title && duplicate?.author.toString() == author) {
         return res.status(409).json({ message: 'Duplicate title and author' })
@@ -96,20 +97,18 @@ const update = asyncHandler(async (req, res) => {
 // @route DELETE /books
 // @access Private
 const remove = asyncHandler(async (req, res) => {
-    const { id } = req.body
+    const { _id } = req.body
 
-    if (!id) {
+    if (!_id) {
         return res.status(400).json({ message: 'Book id is required.'})
     }
 
-    const book = await Book.findById(id).exec()
+    const deletedBook = await Book.findByIdAndRemove(_id).lean().exec()
 
     // Check for book
-    if (!book) {
-        return res.status(400).json({ message: `${deletedBook} Book not found` })
+    if (!deletedBook) {
+        return res.status(400).json({ message: `Book not found` })
     }
-
-    const deletedBook = await book.deleteOne()
 
     res.json({ message: `${deletedBook.title} deleted` })
 })

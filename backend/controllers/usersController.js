@@ -23,12 +23,12 @@ const get = asyncHandler(async (req, res) => {
         return res.status(400).json({ message: 'A password is required if username is provided' })
     }
 
-    const user = await User.find().select().lean()
+    const user = await User.find().lean().exec()
     if (!user) {
         return res.status(400).json({ message: 'User not found' })
     }
     // check password
-    if (user.password === password) {
+    if (bcrypt.compare(password, user.password)) {
         res.json(user)
     } else {
         res.status(400).json({ message: 'User password is incorrect' })
@@ -88,7 +88,7 @@ const update = asyncHandler(async (req, res) => {
     if (!user) {
         return res.status(400).json({ message: 'User not found'})
     }
-    if (password != user.password) {
+    if (bcrypt.compare(password, user.password)) {
         return res.status(400).json({ message: 'Incorrect Password'})
     }
 
@@ -133,14 +133,12 @@ const remove = asyncHandler(async (req, res) => {
             return res.status(400).json({ message: User has assigned collections. deal with that somehow })
         } 
     */
-    const user = await User.findOne({ username }).exec()
+    const deletedUser = await User.findOneAndRemove({ username }).lean()
 
     // Check for user
-    if (!user) {
+    if (!deletedUser) {
         return res.status(400).json({ message: 'User not found' })
     }
-
-    const deletedUser = await User.findOneAndDelete({ username }).lean()
 
     res.json({ message: `User ${deletedUser.username} deleted` })
 })
