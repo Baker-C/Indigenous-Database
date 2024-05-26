@@ -10,7 +10,7 @@ const asyncHandler = require('express-async-handler')
 const get = asyncHandler(async (req, res) => {
     const { _id } = req.body
 
-    // return all if no ID specified
+    // Return all if no ID specified
     if (!_id) {
         const books = await Book.find().lean().exec()
         if (books?.length) {
@@ -34,8 +34,8 @@ const get = asyncHandler(async (req, res) => {
 const create = asyncHandler(async (req, res) => {
     const { title, author } = req.body
 
-    const titleLC = title.toLowerCase()
-    const authorLC = author.toLowerCase()
+    const titleUC = title.toUpperCase()
+    const authorUC = author.toUpperCase()
 
     // Confirm data
     if ( !title || !author ) {
@@ -43,12 +43,12 @@ const create = asyncHandler(async (req, res) => {
     }
 
     // Check for duplicates
-    const duplicate = await Book.findOne({ "title": titleLC, "author": authorLC }).lean().exec()
+    const duplicate = await Book.findOne({ "title": titleUC, "author": authorUC }).lean().exec()
     if (duplicate) {
         return res.status(409).json({ message: 'Duplicate book found' })
     }
 
-    const bookObj = { "title": titleLC, "author": authorLC }
+    const bookObj = { "title": titleUC, "author": authorUC }
     const book = await Book.create(bookObj)
 
     // Check for created
@@ -75,10 +75,10 @@ const update = asyncHandler(async (req, res) => {
         return res.status(400).json({ message: 'Book not found'})
     }
 
-    const titleLC = title.toLowerCase()
-    const authorLC = author.toLowerCase()
+    const titleUC = title.toUpperCase()
+    const authorUC = author.toUpperCase()
     // Check for duplicate
-    const duplicate = await Book.findOne({ "title": titleLC, "author": authorLC }).exec()
+    const duplicate = await Book.findOne({ "title": titleUC, "author": authorUC }).exec()
     // Allow updates to the original book
     if (duplicate && duplicate?.title.toString() == title && duplicate?.author.toString() == author) {
         return res.status(409).json({ message: 'Duplicate title and author' })

@@ -22,7 +22,7 @@ app.use('/', express.static(path.join(__dirname, 'public')))
 app.use('/', require('./routes/root'))
 app.use('/users', require('./routes/userRoutes'))
 app.use('/books', require('./routes/bookRoutes'))
-app.use('/collections', require('./routes/collectionRoutes'))
+app.use('/catalogues', require('./routes/catalogueRoutes'))
 
 // catch all for 404
 app.all('*', (req, res) => {

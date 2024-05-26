@@ -43,7 +43,7 @@ const create = asyncHandler(async (req, res) => {
     const { username, email, password, rePassword } = req.body
 
     // Confirm data
-    if (!username || !email || !password || !rePassword ) {
+    if ( !username || !email || !password || !rePassword ) {
         return res.status(400).json({ message: 'A username, email, and password rePassword are required' })
     }
 
@@ -77,7 +77,7 @@ const create = asyncHandler(async (req, res) => {
 // @route PATCH /users
 // @access Private
 const update = asyncHandler(async (req, res) => {
-    const { username, password, newUsername, newEmail, newPassword } = req.body
+    const { username, password, newUsername, newEmail, newPassword, catalogue } = req.body
 
     // Confirm data
     if ( !username || !password || !newUsername || !newEmail || !newPassword ) {
@@ -94,8 +94,6 @@ const update = asyncHandler(async (req, res) => {
 
     /*
     Need to make this an update email
-        Find user by username
-        Check pass is correct
     */
 
     // Check for duplicate
@@ -107,6 +105,7 @@ const update = asyncHandler(async (req, res) => {
 
     user.username = newUsername
     user.email = newEmail
+    user.catalogues = catalogues.map(catalogue => new ObjId(catalogue))
 
     if (newPassword) {
         // Hash passwrd
