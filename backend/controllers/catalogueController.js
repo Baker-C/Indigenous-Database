@@ -35,25 +35,22 @@ const get = asyncHandler(async (req, res) => {
         return res.json(catalogues)
     }
 
-    // Returns catalogue if PUBLIC or if user ID is on catalogue's owners list
-    if (_id) {
-        // Checks if catalogue exists
-        const catalogue = await Catalogue.findById(_id).populate('entries').select('-owners').lean().exec()
-        if (!catalogue) {
-            return res.status(400).json({ message: 'Catalogue not found' })
-        } 
+    // Checks if catalogue exists
+    const catalogue = await Catalogue.findById(_id).populate('entries').select('-owners').lean().exec()
+    if (!catalogue) {
+        return res.status(400).json({ message: 'Catalogue not found' })
+    } 
 
-        // Returns if PUBLIC
-        if (catalogue && catalogue.privacy === 'PUBLIC' ) {
-            return res.json(catalogue)
-        }
+    // Returns if PUBLIC
+    if (catalogue && catalogue.privacy === 'PUBLIC' ) {
+        return res.json(catalogue)
+    }
 
-        // Returns only if user ID is in owners list of catalogue
-        if (catalogue.owners.includes(ObjId(userId))) {
-            return res.json(catalogue)
-        } else {
-            return res.status(400).json({ message: 'User does not have sufficient permissions' })
-        }
+    // Returns only if user ID is in owners list of catalogue
+    if (catalogue.owners.includes(ObjId(userId))) {
+        return res.json(catalogue)
+    } else {
+        return res.status(400).json({ message: 'User does not have sufficient permissions' })
     }
 })
 

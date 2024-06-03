@@ -1,6 +1,10 @@
 const express = require('express')
 const router = express.Router()
 const cataloguesController = require('../controllers/catalogueController.js')
+const verifyJWT = require('../middleware/verifyJWT')
+
+// adds to all routes
+// router.use(verifyJWT)
 
 router.route('/')
     .get(cataloguesController.get)

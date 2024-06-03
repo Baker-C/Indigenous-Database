@@ -27,6 +27,7 @@ const get = asyncHandler(async (req, res) => {
     if (!user) {
         return res.status(400).json({ message: 'User not found' })
     }
+    console.log(user)
     // check password
     if (bcrypt.compare(password, user.password)) {
         res.json(user)
