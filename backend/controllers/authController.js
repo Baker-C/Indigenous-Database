@@ -12,7 +12,7 @@ const login = asyncHandler(async (req, res) => {
         return res.status(400).json({ message: 'All fields are required' })
     }
 
-    const user = await User.findOne({ username: username }).exec()
+    const user = await User.findOne({ username }).lean().exec()
     if (!user) {
         return res.status(401).json({ message: 'User not found' })
     }
@@ -25,7 +25,7 @@ const login = asyncHandler(async (req, res) => {
     const accessToken = jwt.sign(
         { "username": user.username },
         process.env.ACCESS_TOKEN_KEY,
-        { expiresIn: '30s' }
+        { expiresIn: '10s' }
     )
 
     const refreshToken = jwt.sign(
@@ -42,11 +42,14 @@ const login = asyncHandler(async (req, res) => {
         maxAge: 7 * 24 * 60 * 60 * 1000 // expires in a week
     })
 
-
+    // dont send back the password
+    delete user.password
 
     // send accessToken as the response
-    res.json({ accessToken })
+    res.json({ accessToken, user })
 })
+
+
 
 // @desc Refresh
 // @route GET /auth/refresh
@@ -68,7 +71,7 @@ const refresh = (req, res) => {
                 return res.status(403).json({ message: 'Forbidden' })
             }
 
-            const user = await User.findOne({ username: decoded.username }).lean().exec()
+            const user = await User.findOne({ username: decoded.username }).select('-password').lean().exec()
 
             const accessToken = jwt.sign(
                 {
@@ -78,7 +81,7 @@ const refresh = (req, res) => {
                 { expiresIn: '10s' }
             )
 
-            res.json({ accessToken })
+            res.json({ accessToken, user })
         }
     ))
 }

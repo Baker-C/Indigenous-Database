@@ -1,30 +1,72 @@
 const Book = require('../schemas/Book')
 const asyncHandler = require('express-async-handler')
+const User = require('../schemas/User')
 
 
 
-
-// @desc Get a single books
+// @desc Get a page of books
 // @route GET /books
 // @access Private
 const get = asyncHandler(async (req, res) => {
+    // size is a boolean to get total number of results instead of the actual results
     const { _id } = req.body
+    const size = req.query.size // returning entire size of query
+    const p = parseInt(req.query.p, 10) || 0 // page number
+    const q = req.query.q // search query
+    const s = parseInt(req.query.s, 10) || 50 // page size
 
-    // Return all if no ID specified
-    if (!_id) {
-        const books = await Book.find().lean().exec()
-        if (books?.length) {
-           return res.json(books)
-        } else {
-            return res.status(400).json({ message: 'No books found' })
+
+    // Return single book if id is specified
+    if (_id) {
+        const book = await Book.findOne(_id).lean().exec()
+        if (!book) {
+            return res.status(400).json({ message: 'Book not found' })
         }
+        res.json(book)
     }
 
-    const book = await Book.findOne().lean().exec()
-    if (!book) {
-        return res.status(400).json({ message: 'Book not found' })
+    // Return num entries if size is true
+    if (size) {
+        const books = !q ? await Book.find().lean().exec() : await Book.find({
+                $or: [
+                    { author: { $regex: `.*${q}.*`, $options: 'i' } },
+                    { title: { $regex: `.*${q}.*`, $options: 'i' } },
+                ]
+            }).lean().exec()
+        const resultSize = books.length
+        return res.json(resultSize)
     }
-    res.json(book)
+
+
+    // Query the book pages
+    if (q === undefined) {
+        const books = await Book.find()
+            .sort({ author: 1 })
+            .skip(p * s)
+            .limit(s)
+            .exec()
+
+        if (!books) {
+            return res.status(400).json({ message: 'Books not found' })
+        }
+        return res.json(books)
+    }
+
+    const books = await Book.find({
+            $or: [
+                { author: { $regex: `.*${q}.*`, $options: 'i' } },
+                { title: { $regex: `.*${q}.*`, $options: 'i' } },
+            ]
+        })
+        .skip(p * s)
+        .limit(s)
+        .exec()
+    
+    if (!books) {
+        return res.status(400).json({ message: 'Books not found' })
+    }
+    return res.json(books)
+
 })
 
 
@@ -33,22 +75,19 @@ const get = asyncHandler(async (req, res) => {
 // @access Private
 const create = asyncHandler(async (req, res) => {
     const { title, author } = req.body
-
-    const titleUC = title.toUpperCase()
-    const authorUC = author.toUpperCase()
-
+    
     // Confirm data
     if ( !title || !author ) {
         return res.status(400).json({ message: 'A title and author are required' })
     }
 
     // Check for duplicates
-    const duplicate = await Book.findOne({ "title": titleUC, "author": authorUC }).lean().exec()
+    const duplicate = await Book.findOne({ title, author }).lean().exec()
     if (duplicate) {
         return res.status(409).json({ message: 'Duplicate book found' })
     }
 
-    const bookObj = { "title": titleUC, "author": authorUC }
+    const bookObj = { title, author }
     const book = await Book.create(bookObj)
 
     // Check for created
@@ -97,13 +136,13 @@ const update = asyncHandler(async (req, res) => {
 // @route DELETE /books
 // @access Private
 const remove = asyncHandler(async (req, res) => {
-    const { _id } = req.body
+    const { id } = req.body
 
-    if (!_id) {
+    if (!id) {
         return res.status(400).json({ message: 'Book id is required.'})
     }
 
-    const deletedBook = await Book.findByIdAndRemove(_id).lean().exec()
+    const deletedBook = await Book.findByIdAndRemove({ _id: id }).lean().exec()
 
     // Check for book
     if (!deletedBook) {

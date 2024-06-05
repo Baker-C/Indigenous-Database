@@ -35,6 +35,7 @@ const get = asyncHandler(async (req, res) => {
         return res.json(catalogues)
     }
 
+    // Return a specific catalogue from a specific user
     // Checks if catalogue exists
     const catalogue = await Catalogue.findById(_id).populate('entries').select('-owners').lean().exec()
     if (!catalogue) {

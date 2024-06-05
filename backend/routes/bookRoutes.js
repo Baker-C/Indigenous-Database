@@ -5,7 +5,7 @@ const booksController = require('../controllers/booksController')
 const verifyJWT = require('../middleware/verifyJWT')
 
 // adds to all routes
-router.use(verifyJWT)
+// router.use(verifyJWT)
 
 router.route('/')
     .get(booksController.get)
