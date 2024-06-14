@@ -12,7 +12,7 @@ const login = asyncHandler(async (req, res) => {
         return res.status(400).json({ message: 'All fields are required' })
     }
 
-    const user = await User.findOne({ username }).lean().exec()
+    const user = await User.findOne({ username }).populate('catalogues').lean().exec()
     if (!user) {
         return res.status(401).json({ message: 'User not found' })
     }
@@ -31,7 +31,7 @@ const login = asyncHandler(async (req, res) => {
     const refreshToken = jwt.sign(
         { "username": user.username },
         process.env.REFRESH_TOKEN_KEY,
-        { expiresIn: '1d' }
+        { expiresIn: '30d' }
     )
 
     // send refreshToken as a cookie
@@ -39,7 +39,7 @@ const login = asyncHandler(async (req, res) => {
         httpOnly: true, // only access through web server
         secure: false, // only https
         //sameSite: 'None', // cross-site cookies
-        maxAge: 7 * 24 * 60 * 60 * 1000 // expires in a week
+        maxAge: 30 * 24 * 60 * 60 * 1000 // expires in a month
     })
 
     // dont send back the password
@@ -71,7 +71,10 @@ const refresh = (req, res) => {
                 return res.status(403).json({ message: 'Forbidden' })
             }
 
-            const user = await User.findOne({ username: decoded.username }).select('-password').lean().exec()
+            const user = await User.findOne({ username: decoded.username })
+                                    .select('-password')
+                                    .populate('catalogues')
+                                    .lean().exec()
 
             const accessToken = jwt.sign(
                 {

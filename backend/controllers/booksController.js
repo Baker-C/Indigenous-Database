@@ -25,7 +25,7 @@ const get = asyncHandler(async (req, res) => {
         res.json(book)
     }
 
-    // Return num entries if size is true
+    // Return total num entries if size is true
     if (size) {
         const books = !q ? await Book.find().lean().exec() : await Book.find({
                 $or: [
@@ -46,7 +46,7 @@ const get = asyncHandler(async (req, res) => {
             .limit(s)
             .exec()
 
-        if (!books) {
+        if (!books.length) {
             return res.status(400).json({ message: 'Books not found' })
         }
         return res.json(books)
@@ -62,7 +62,7 @@ const get = asyncHandler(async (req, res) => {
         .limit(s)
         .exec()
     
-    if (!books) {
+    if (!books.length) {
         return res.status(400).json({ message: 'Books not found' })
     }
     return res.json(books)
@@ -129,7 +129,7 @@ const update = asyncHandler(async (req, res) => {
     // Confirm update
     const updatedBook = await book.save()
 
-    res.json({ message: `${updatedBook.title} updated`})
+    res.status(201).json({ message: `${updatedBook.title} updated`})
 })
 
 // @desc Delete book

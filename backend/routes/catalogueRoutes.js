@@ -1,6 +1,6 @@
 const express = require('express')
 const router = express.Router()
-const cataloguesController = require('../controllers/catalogueController.js')
+const cataloguesController = require('../controllers/cataloguesController.js')
 const verifyJWT = require('../middleware/verifyJWT')
 
 // adds to all routes

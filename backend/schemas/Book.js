@@ -9,6 +9,11 @@ const bookSchema = new Schema({
     author: {
         type: String,
         required: true
+    },
+    link: {
+        type: String,
+        required: true,
+        default: 'https://github.com/Baker-C/SeniorProject'
     }
 })
 

@@ -11,15 +11,24 @@ const catalogueSchema = new Schema({
         enum: ['PUBLIC', 'PRIVATE'],
         default: 'PUBLIC'
     },
-    owners: [{
-        type: Schema.Types.ObjectId,
-        ref: 'User',
+    owner: {
+        type: String,
         required: true
-    }],
+    },
     entries: [{
         type: Schema.Types.ObjectId,
         ref: 'Book'
-    }]
+    }],
+    date: {
+        type: Date,
+        required: true
+    },
+    color: {
+        type: String,
+        required: true,
+        default: 'LightSteelBlue',
+        enum: ['LightSteelBlue', 'DodgerBlue', 'SteelBlue', 'LightSalmon', 'LightPink', 'Violet', 'DarkOrchid', 'SeaGreen', 'MediumSpringGreen']
+    }
 })
 
 module.exports = mongoose.model('Catalogue', catalogueSchema) 

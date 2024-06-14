@@ -17,6 +17,16 @@ const userSchema = new mongoose.Schema({
     catalogues: [{
         type: Schema.Types.ObjectId,
         ref: 'Catalogue'
+    }],
+    icon: {
+        type: String,
+        required: true,
+        default: 'LightSteelBlue',
+        enum: ['LightSteelBlue', 'DodgerBlue', 'SteelBlue', 'LightSalmon', 'LightPink', 'Violet', 'DarkOrchid', 'SeaGreen', 'MediumSpringGreen']
+    },
+    groups: [{
+        type: Schema.Types.ObjectId,
+        ref: 'Group'
     }]
 })
 
