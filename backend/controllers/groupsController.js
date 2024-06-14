@@ -10,14 +10,6 @@ const ObjId = mongoose.Types.ObjectId
 const get = asyncHandler(async (req, res) => {
     const { id, title, userId } = req.query
 
-    // Id or title returns the populated group, userId returns all populated groups of user
-    if ( (!id || id === 'undefined') && (!title || title === 'undefined') && (!userId || userId === 'undefined') ) {
-        const groups = await Group.find().populate('members').lean().exec()
-        if (!groups.length) {
-            return res.status(400).json({ message: 'Groups not found' })
-        } 
-    }
-
     if (id && id !== 'undefined') {
         // Checks if group exists
         const group = await Group.findById(id).populate('members').lean().exec()
@@ -48,6 +40,11 @@ const get = asyncHandler(async (req, res) => {
         return res.json(user.groups)
     }
 
+    const groups = await Group.find().populate({ path: 'members', select: '-password' }).lean().exec()
+    if (!groups.length) {
+        return res.status(400).json({ message: 'Groups not found' })
+    }
+    return res.json(groups)
 })
 
 
