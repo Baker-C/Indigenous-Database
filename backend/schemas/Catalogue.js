@@ -6,11 +6,6 @@ const catalogueSchema = new Schema({
         type: String,
         required: true
     },
-    privacy: {
-        type: String,
-        enum: ['PUBLIC', 'PRIVATE'],
-        default: 'PUBLIC'
-    },
     owner: {
         type: String,
         required: true
@@ -19,15 +14,19 @@ const catalogueSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: 'Book'
     }],
-    date: {
+    created: {
         type: Date,
-        required: true
+        default: Date.now
+    },
+    lastUpdated: {
+        type: Date,
+        default: Date.now
     },
     color: {
         type: String,
         required: true,
         default: 'LightSteelBlue',
-        enum: ['LightSteelBlue', 'DodgerBlue', 'SteelBlue', 'LightSalmon', 'LightPink', 'Violet', 'DarkOrchid', 'SeaGreen', 'MediumSpringGreen']
+        enum: ['LightSteelBlue', 'DodgerBlue', 'SteelBlue', 'LightSalmon', 'LightPink', 'Violet', 'SeaGreen', 'MediumSpringGreen']
     }
 })
 

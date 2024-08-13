@@ -1,135 +1,101 @@
 const Catalogue = require('../schemas/Catalogue')
 const User = require('../schemas/User')
 const Book = require('../schemas/Book')
-const asyncHandler = require('express-async-handler')
 const mongoose = require('mongoose')
 const ObjId = mongoose.Types.ObjectId
 
 // @desc Get a single catalogue
 // @route GET /catalogues
 // @access Private
-const get = asyncHandler(async (req, res) => {
-    const size = req.query.size // returning entire size of query
-    const p = parseInt(req.query.p, 10) || 0 // page number
-    const q = req.query.q // search query
-    const s = parseInt(req.query.s, 10) || 50 // page size
+const get = async (req, res) => {
     const id = req.query.id
+    const q = req.query.q // search query
     const userId = req.query.userId
 
+    
+    // Return specific catalogue if catalogue ID provided
+    if (id) {
+        // Checks if catalogue exists
+        const catalogue = await Catalogue.findById(id).populate('entries').lean().exec()
+        if (!catalogue) {
+            return res.status(400).json({ message: 'Catalogue not found' })
+        } 
 
-    // Return all catalogues of a users catalogues list if user ID is specified and no catalogue ID specified
-    if ( !id && userId ) {
-        // Checks if user exists
-        const user = await User.findById(userId)
+        return res.json(catalogue)
+    }
+
+    let catalogues
+
+    if (userId) {
+
+        // Return all catalogues of a users catalogues list if user ID is specified
+        if (q !== undefined) {
+            const user = await User.findById(userId)
             .select('-password')
-            .populate({
+            .populate({ 
                 path: 'catalogues',
-                    populate: {
-                        path: 'entries'
-                    }
+                    match: { title: { $regex: `.*${q}.*`, $options: 'i' } },
+                    populate: { path: 'entries' }
             })
             .lean().exec()
-        if (!user) {
-            return res.status(400).json({ message: `User ${userId} not found` })
-        }
-        const catalogues = user.catalogues
-        return res.json(catalogues)
-    }
 
-    // Return specific catalogue if catalogue ID rpovided - PUBLIC
-    if (id && !userId) {
-        // Checks if catalogue exists
-        const catalogue = await Catalogue.findById(id).populate('entries').lean().exec()
-        if (!catalogue) {
-            return res.status(400).json({ message: 'Catalogue not found - PUBLIC' })
-        } 
+            if (!user) return res.status(400).json({ message: `User ${userId} not found` })
+            catalogues = user.catalogues
 
-        // Returns if PUBLIC
-        if (catalogue && catalogue.privacy === 'PUBLIC' ) {
-            return res.json(catalogue)
-        } else if (catalogue && catalogue.privacy === 'PRIVATE') {
-            return res.status(400).json({ message: 'UserId needed for PRIVATE' })
         } else {
-            return res.status(409).json({ message: 'Catalogue not found' })
+
+            const user = await User.findById(userId)
+            .select('-password')
+            .populate({ 
+                path: 'catalogues',
+                    populate: { path: 'entries' }
+            })
+            .lean().exec()
+
+            if (!user) return res.status(400).json({ message: `User ${userId} not found` })
+            catalogues = user.catalogues
         }
-    }
-    
 
-    // Return specific catalogue if catalogue ID rpovided - PRIVATE
-    if (id && userId) {
-        // Checks if catalogue exists
-        const catalogue = await Catalogue.findById(id).populate('entries').lean().exec()
-        if (!catalogue) {
-            return res.status(400).json({ message: 'Catalogue not found - PRIVATE' })
-        } 
+    } else {
 
-        // Returns only if user ID is in owners list of catalogue
-        if (catalogue.owner === ObjId(userId)) {
-            return res.json(catalogue)
-        } else {
-            return res.status(400).json({ message: 'User does not have sufficient permissions' })
-        }
-    }
-
-
-    // Query for catalogues
-    // Return total num catalogues if size is true
-    if (size) {
-        const catalogues = !q ? await Catalogue.find().lean().exec() : await Catalogue.find({
-                $or: [
-                    { title: { $regex: `.*${q}.*`, $options: 'i' } }
-                ]
-            }).lean().exec()
-        const resultSize = catalogues.length
-        return res.json(resultSize)
-    }
-
-    // Query the catalogue pages
-    if (q === undefined) {
-        const catalogues = await Catalogue.find()
+        // if no userId is specified
+        if (q !== undefined) {
+            catalogues = await Catalogue.find({ 
+                title: { $regex: `.*${q}.*`, $options: 'i' },
+                owner: userId
+             })
             .sort({ date: 1 })
             .skip(p * s)
             .limit(s)
             .exec()
 
-        if (!catalogues || catalogues.length === 0) {
-            return res.status(400).json({ message: 'Catalogues not found' })
+        } else {
+
+            catalogues = await Catalogue.find()
+            .sort({ date: 1 })
+            .skip(p * s)
+            .limit(s)
+            .exec()
         }
-        return res.json(catalogues)
     }
 
-    const catalogues = await Catalogue.find({
-            $or: [
-                { title: { $regex: `.*${q}.*`, $options: 'i' } }
-            ]
-        })
-        .sort({ date: 1 })
-        .skip(p * s)
-        .limit(s)
-        .exec()
-    
-    if (!catalogues || catalogues.length === 0) {
+    if (!catalogues) {
         return res.status(400).json({ message: 'Catalogues not found' })
     }
     return res.json(catalogues)
-})
+}
 
 
 
 // @desc Create new catalogue
 // @route POST /catalogues
 // @access Private
-const create = asyncHandler(async (req, res) => {
-    const { title, ownerUsername, entries } = req.body
+const create = async (req, res) => {
+    const { ownerUsername, entries } = req.body
 
     // Confirm data
-    if ( !title || !ownerUsername ) {
-        return res.status(400).json({ message: 'A title and ownerUsername is required is required' })
-    }
-
-    // Check against illegal names
-    if (title === 'Saved Books') {
-        return res.status(400).json({ message: 'Illegal name, choose a different one' })
+    if ( !ownerUsername ) {
+        return res.status(400).json({ message: 'An ownerUsername is required' })
     }
 
     // Check that owner exists
@@ -146,12 +112,6 @@ const create = asyncHandler(async (req, res) => {
         }
     }
 
-    // Check for duplicates
-    const duplicate = await Catalogue.findOne({ 'title': title }).lean().exec()
-    if (duplicate) {
-        return res.status(409).json({ message: `Duplicate title found ${title}` })
-    }
-
     // init entries
     let entriesObjIds
     if (entries) {
@@ -160,15 +120,13 @@ const create = asyncHandler(async (req, res) => {
         entriesObjIds = []
     }
 
-    // init Date obj
-    const currentDate = new Date()
+    // set initial title
+    const title = `Untitiled ${owner?.catalogues.length + 1}`
 
     const catalogueObj = { 
         'title': title, 
-        'privacy': 'PUBLIC', 
         'entries': entriesObjIds, 
         'owner': ownerUsername,
-        'date': currentDate
     }
     const catalogue = await Catalogue.create({ ...catalogueObj })
 
@@ -182,17 +140,17 @@ const create = asyncHandler(async (req, res) => {
 
     // Check for created
     if (catalogue) {
-        res.status(201).json({ message: `New catalogue title: ${title} id: ${catalogue._id} created` })
+        res.status(201).json({ message: `New catalogue ${title} id: ${catalogue._id} created` })
     } else {
         res.status(400).json({ message: 'Error creating catalogue: Invalid catalogue data recieved' })
     }
-})
+}
 
 // @desc Update catalogue
 // @route PATCH /catalogues
 // @access Private
-const update = asyncHandler(async (req, res) => {
-    const { id, title, privacy, addEntries, delEntries, color } = req.body
+const update = async (req, res) => {
+    const { id, title, addEntries, delEntries, color } = req.body
 
     // Confirm data
     if (!id) {
@@ -206,10 +164,10 @@ const update = asyncHandler(async (req, res) => {
     }
     
     // Check against illegal names
-    if (title && title === 'Saved Books') {
+    if (title && (title === 'Saved Books' || title.includes('Untitled'))) {
         return res.status(400).json({ message: 'Illegal name, choose a different one' })
     } else if (title && (catalogue.title === 'Saved Books')) {
-        return res.status(400).json({ message: 'Cannot modify title of Saved Books' })
+        return res.status(400).json({ message: 'Cannot modify title of "Saved Books"' })
     }
 
     if (title) {     
@@ -218,17 +176,9 @@ const update = asyncHandler(async (req, res) => {
         if (duplicate) {
             return res.status(409).json({ message: 'Duplicate title' })
         }
-    }
-
-    // Check that priivacy follows enum of 'PUBLIC', 'PRIVATE'
-    const PRIVACY_ENUMS = ['PUBLIC', 'PRIVATE']
-    if (privacy && !PRIVACY_ENUMS.includes(privacy)) {
-        return res.status(400).json({ message: `${privacy} not valid. Must be either 'PUBLIC' or 'PRIVATE'`})
+        catalogue.title = title
     }
     
-    // Update info
-    if (title) catalogue.title = title
-    if (privacy) catalogue.privacy = privacy
     if (addEntries) {
         // Check that all entries exist
         const checkedEntries = await Book.find({ _id: { $in: addEntries.map(entry => new ObjId(entry)) } }).lean().exec()
@@ -250,21 +200,21 @@ const update = asyncHandler(async (req, res) => {
         }
         catalogue.entries = [ ...catalogue.entries.filter(entry => !delEntries.includes(entry.toString())) ]
     }
-    if (!catalogue.date) catalogue.date = new Date()
     if (color) catalogue.color = color
 
+    catalogue.lastUpdated = Date.now()
     // Confirm update
     const updatedCatalogue = await catalogue.save()
 
     res.json({ message: `${updatedCatalogue.title} updated`})
-})
+}
 
 
 
 // @desc Delete catalogue
 // @route DELETE /catalogues
 // @access Private
-const remove = asyncHandler(async (req, res) => {
+const remove = async (req, res) => {
     const { id } = req.body
 
     if ( !id ) {
@@ -277,24 +227,19 @@ const remove = asyncHandler(async (req, res) => {
     if (!catalogue) {
         return res.status(400).json({ message: `Catalogue not found` })
     } else if (catalogue.title === "Saved Books") {
-        return res.sendStatus(400).json({ message: 'Illegal to delete "Saved Books" catalogue' })
+        return res.status(400).json({ message: 'Illegal to delete "Saved Books" catalogue' })
     }
 
-    //if (catalogue.owner !== new ObjId(userId) ) {
-    //    return res.status(400).json({ message: 'User is not the owner of the catalogue' })
-    //}
-
-    // Delete from all other user's catalogue lists
-    const objId = new ObjId(id)
-    const updatedUsers = await User.updateMany({}, { $pull: { catalogues: objId }})
-    if (!updatedUsers) {
+    // Delete from all other users' catalogue lists
+    const updatedUsers = await User.updateMany({}, { $pull: { catalogues: new ObjId(id) } })
+    if (updatedUsers.modifiedCount === 0) {
         return res.status(400).json({ message: 'Catalogues of other users not updated with delete' })
     }
 
     const deletedCatalogue = await Catalogue.findByIdAndDelete(id).lean().exec()
 
     res.json({ message: `${deletedCatalogue.title} deleted` })
-})
+}
 
 
 

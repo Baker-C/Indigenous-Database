@@ -1,12 +1,11 @@
 const User = require('../schemas/User')
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
-const asyncHandler = require('express-async-handler')
 
 // @desc Logout
 // @route POST /auth
 // @access Public
-const login = asyncHandler(async (req, res) => {
+const login = async (req, res) => {
     const { username, password } = req.body
     if (!username || !password) {
         return res.status(400).json({ message: 'All fields are required' })
@@ -47,7 +46,7 @@ const login = asyncHandler(async (req, res) => {
 
     // send accessToken as the response
     res.json({ accessToken, user })
-})
+}
 
 
 
@@ -66,7 +65,7 @@ const refresh = (req, res) => {
     jwt.verify(
         refreshToken,
         process.env.REFRESH_TOKEN_KEY,
-        asyncHandler(async (err, decoded) => {
+        async (err, decoded) => {
             if (err) {
                 return res.status(403).json({ message: 'Forbidden' })
             }
@@ -86,7 +85,7 @@ const refresh = (req, res) => {
 
             res.json({ accessToken, user })
         }
-    ))
+    )
 }
 
 // @desc Logout

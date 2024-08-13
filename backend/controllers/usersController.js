@@ -1,7 +1,6 @@
 const User = require('../schemas/User')
 const Group = require('../schemas/Group')
 const Catalogue = require('../schemas/Catalogue')
-const asyncHandler = require('express-async-handler')
 const bcrypt = require('bcrypt')
 const mongoose = require('mongoose')
 const ObjId = mongoose.Types.ObjectId
@@ -10,7 +9,7 @@ const ObjId = mongoose.Types.ObjectId
 // @desc Get a single user
 // @route GET /users
 // @access Private
-const get = asyncHandler(async (req, res) => {
+const get = async (req, res) => {
     const { username } = req.body
 
     // returns all users if no username specified
@@ -33,13 +32,13 @@ const get = asyncHandler(async (req, res) => {
     }
 
     res.json(user)
-})
+}
 
 
 // @desc Create new user
 // @route POST /users
 // @access Private
-const create = asyncHandler(async (req, res) => {
+const create = async (req, res) => {
     const { username, email, password, rePassword } = req.body
 
     // Confirm data
@@ -90,13 +89,13 @@ const create = asyncHandler(async (req, res) => {
     }
 
     res.status(201).json({ message: `New user ${username} created` })
-})
+}
 
 
 // @desc Update user
 // @route PATCH /users
 // @access Private
-const update = asyncHandler(async (req, res) => {
+const update = async (req, res) => {
     const { username, newUsername, email, catalogueId, friendId, groupId } = req.body
 
     // Confirm data
@@ -143,12 +142,12 @@ const update = asyncHandler(async (req, res) => {
     const updatedUser = await user.save()
 
     res.json({ message: `${updatedUser.username} updated`})
-})
+}
 
 // @desc Delete user
 // @route DELETE /users
 // @access Private
-const remove = asyncHandler(async (req, res) => {
+const remove = async (req, res) => {
     const { username, id } = req.body
 
     if (!username && !id) {
@@ -196,7 +195,7 @@ const remove = asyncHandler(async (req, res) => {
     }
 
     res.json({ message: `User ${deletedUser.username} deleted` })
-})
+}
 
 module.exports = {
     get,
