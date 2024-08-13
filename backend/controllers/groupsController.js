@@ -1,13 +1,12 @@
 const Group = require('../schemas/Group')
 const User = require('../schemas/User')
-const asyncHandler = require('express-async-handler')
 const mongoose = require('mongoose')
 const ObjId = mongoose.Types.ObjectId
 
 // @desc Get a single group
 // @route GET /groups
 // @access Private
-const get = asyncHandler(async (req, res) => {
+const get = async (req, res) => {
     const { id, title, userId } = req.query
 
     if (id && id !== 'undefined') {
@@ -45,14 +44,14 @@ const get = asyncHandler(async (req, res) => {
         return res.status(400).json({ message: 'Groups not found' })
     }
     return res.json(groups)
-})
+}
 
 
 
 // @desc Create new group
 // @route POST /groups
 // @access Private
-const create = asyncHandler(async (req, res) => {
+const create = async (req, res) => {
     const { title, userId } = req.body
 
     // Confirm data
@@ -92,12 +91,12 @@ const create = asyncHandler(async (req, res) => {
     } else {
         res.status(400).json({ message: 'Error creating group: Invalid group data recieved' })
     }
-})
+}
 
 // @desc Update group
 // @route PATCH /groups
 // @access Private
-const update = asyncHandler(async (req, res) => {
+const update = async (req, res) => {
     const { id, title, addMembers, delMembers } = req.body
 
     // Confirm data
@@ -118,26 +117,13 @@ const update = asyncHandler(async (req, res) => {
         if (duplicate) {
             return res.status(409).json({ message: 'Duplicate title' })
         }
+        group.title = title
     }
     
-    // Update info
-    if (title) group.title = title
-    if (addMembers) {
-        const user = await User.findById(memberId).lean().exec()
-        if (!user) {
-            return res.status(400).json({ message: 'Member not found'})
-        }        
-        const memberObjId = new ObjId(memberId)
-        if (group.members?.includes(memberObjId)) {
-            group.members = group.members?.filter(m => m !== memberObjId)
-        } else {
-            group.members = { ...group.members, memberObjId }
-        }
-    }
 
     if (addMembers) {
         // Check that all members exist
-        const checkedMembers = await Group.find({ _id: { $in: addMembers.map(user => new ObjId(user)) } }).lean().exec()
+        const checkedMembers = await User.find({ _id: { $in: addMembers.map(user => new ObjId(user)) } }).lean().exec()
         if (checkedMembers?.length !== addMembers?.length) {
             return res.status(400).json({ message: `Member(s) not found` })
         }
@@ -161,14 +147,14 @@ const update = asyncHandler(async (req, res) => {
     const updatedGroup = await group.save()
 
     res.json({ message: `${updatedGroup.title} updated`})
-})
+}
 
 
 
 // @desc Delete group
 // @route DELETE /groups
 // @access Private
-const remove = asyncHandler(async (req, res) => {
+const remove = async (req, res) => {
     const { id } = req.body
 
     if ( !id ) {
@@ -183,21 +169,18 @@ const remove = asyncHandler(async (req, res) => {
     }
 
     // update user's groups
-    const updatedGroups = await Group.updateMany({}, { $pull: { groups: new ObjId(id) }})
-    if (!updatedGroups) {
+    const updatedGroups = await User.updateMany({}, { $pull: { groups: { _id: new ObjId(id) } }})
+    if (!updatedGroups.nModified) {
         return res.status(400).json({ message: `Groups not updated with delete` })
     }
 
-    let deletedGroup
-    if (id) {
-        deletedGroup = await Group.findByIdAndRemove(id).lean().exec()
-    }
+    const deletedGroup = await Group.findByIdAndRemove(id).lean().exec()
     if (!deletedGroup) {
         return res.status(400).json({ message: 'Failed to delete group' })
     }
 
     res.json({ message: `Group ${deletedGroup.title} deleted` })
-})
+}
 
 
 
