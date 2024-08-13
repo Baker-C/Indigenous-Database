@@ -1,0 +1,144 @@
+.catalogues-popup {
+    position: fixed;
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    top: 30%;
+    min-height: 150px;
+    max-height: 400px;
+    width: 300px;
+    left: 50%;
+    transform: translate(-50%);
+    background-color: var(--dark-bg-color);
+    border: 1px solid var(--dark-acc-color);
+    border-radius: 3px;
+}
+
+.catalogue-header-container {
+    width: 90%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    
+}
+
+.catalogues-popup h1 {
+    color: black;
+    text-wrap: nowrap;
+    font-size: .75em;
+}
+
+.exit-button {
+    font-size: 14px;
+    color: black;
+    background: none;
+    width: 30px;
+    height: 30px;
+}
+
+    .exit-button:hover {
+        color: black;
+        cursor: pointer;
+    }
+    
+.catalogue-search {
+    width: 100%;
+    padding: 0;
+}
+
+.catalogue-search input {
+    background-color: var(--main-bg-color);
+    border: none;
+    border-bottom: 2px solid black;
+    box-shadow: none;
+    outline: none;
+    width: 90%;
+    height: 10px;
+    padding: 3%;
+    margin: 0;
+}
+
+.catalogues-container {
+    height: 100px;
+    width: 100%;
+    overflow-x: hidden;
+    overflow-y: scroll;
+}
+/* Custom scrollbar styling for WebKit browsers (Chrome, Safari) */
+.catalogues-container::-webkit-scrollbar {
+    width: 8px; /* Width of the scrollbar */
+}
+
+.catalogues-container::-webkit-scrollbar-track {
+    background: #f1f1f1; /* Background of the scrollbar track */
+}
+
+.catalogues-container::-webkit-scrollbar-thumb {
+    background: #888; /* Background of the scrollbar handle */
+    border-radius: 4px; /* Rounded corners for the scrollbar handle */
+}
+
+.catalogues-container::-webkit-scrollbar-thumb:hover {
+    background: #555; /* Background of the scrollbar handle on hover */
+}
+
+/* Custom scrollbar styling for Firefox */
+.catalogues-container {
+    scrollbar-width: thin; /* Thin scrollbar */
+    scrollbar-color: #888 #f1f1f1; /* Scrollbar handle and track color */
+}
+
+.checkbox-container {
+    width: fit-content;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    width: 95%;
+}
+
+.checkbox-container:hover {
+    background-color: var(--dark-acc-color);
+}
+
+input[type=checkbox] {
+    width: 0;
+    height: 0;
+}
+
+.checkbox {
+    cursor: pointer;
+    height: 13px;
+    width: 13px;
+    margin: auto 10px;
+    border: 1px solid black;
+    border-radius: 10px;
+}
+
+.checkbox-container input:checked ~ .checkbox {
+    background-color: #388;
+}
+
+.catalogue-add {
+    width: 90%;
+    font-size: 15px;
+    cursor: pointer;
+    border: 2px solid var(--dark-acc-color);
+}
+
+
+.add-button {
+    background-color: var(--main-acc-color);
+    color: var(--main-bg-color);
+    padding: 15px;
+    width: 200px;
+    border-radius: 15px;
+    transition-duration: 200ms;
+    cursor: pointer;
+}
+    .add-button:hover {
+        background-color: var(--dark-acc-color);
+    }

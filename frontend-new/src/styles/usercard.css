@@ -1,0 +1,71 @@
+.user-card {
+    height: 60px;
+    width: 100%;
+    border: 1px solid #bbb;
+    padding: 3px;
+    background-color: #fff;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.user-image-container {
+    height: 100%;
+    width: 60px;
+    display: flex;
+    align-items: flex-start;
+}
+
+.user-image {
+    height: 100%;
+    position: relative;
+    left: 0;
+}
+
+.user-header {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: flex-start;
+}
+
+.user-info {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    height: 100%;
+    overflow: hidden;
+}
+
+.user-username {
+    font-size: 17px;
+    height: 18px;
+    color: #1c1c1c;
+    text-wrap: nowrap;
+    text-align: left;
+}
+
+.user-author {
+    position: relative;
+    top: -20px;
+    font-size: 12px;
+    font-style: italic;
+    color: #1c1c1c;
+}
+
+.user-footer {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
+    text-align: center;
+    color: #1c1c1c;
+    width: 300px;
+}
+
+.user-add {
+    font-size: 30px;
+    cursor: pointer;
+
+}
+
