@@ -31,10 +31,10 @@
     text-align: left;
 }
 
-    .home-link:hover {
-        color: var(--main-bg-color);
-        text-decoration: none;
-    }
+.home-link:hover {
+    color: var(--main-text-color);
+    text-decoration: none;
+}
 
 .header h2 {
     font-size: 23px;

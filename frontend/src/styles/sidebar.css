@@ -18,7 +18,12 @@ body {
 
     .icon.open {
         right: 255px;
-    }   
+    }
+
+    .icon:hover {
+        color: var(--main-bg-color);
+        text-decoration: none;
+    }
 
 .user-icon {
     position: fixed;

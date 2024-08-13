@@ -2,6 +2,7 @@ import { useRef, useState, useEffect } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import usePersist from '../../hooks/usePersist'
 import { useDispatch, useSelector } from 'react-redux'
+import { BarLoader } from 'react-spinners'
 import { setUser, setCredentials, selectCurrentUser } from './authSlice'
 import { useLoginMutation } from './authApiSlice'
 import Redirect from '../../components/Redirect'
@@ -40,8 +41,6 @@ const LoginForm = () => {
         setMessage('')
     }, [username, password])
 
-    if (isLoading) return <p>Loading...</p>
-
     const handleSubmit = async (e) => {
         e.preventDefault() // prevents page reload
 
@@ -73,9 +72,18 @@ const LoginForm = () => {
     
     let content
 
-    if (user?.username && !isLoading) {
+    if (isLoading) {
+        content = (
+            <BarLoader 
+            color={'#000'} 
+            style={{margin: '0 100%'}} 
+            />
+        )
+    } else if (user?.username && !isLoading) {
 
-        content = <Redirect username={user.username} />
+        content = (
+            <Redirect username={user.username} />
+        )
 
     } else {
 
