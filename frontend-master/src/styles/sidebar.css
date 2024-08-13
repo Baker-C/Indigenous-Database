@@ -1,0 +1,129 @@
+body {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    font-family: Arial, sans-serif;
+}
+
+.icon {
+    position: fixed;
+    top: 8px;
+    right: 30px;
+    cursor: pointer;
+    font-size: 32px;
+    z-index: 10;
+    transition: right 0.2s ease;
+    color: white;
+}
+
+    .icon.open {
+        right: 255px;
+    }   
+
+.user-icon {
+    position: fixed;
+    display: flex;
+    text-align: center;
+    top: 6px;
+    right: 20px;
+    cursor: pointer;
+    height: 35px;
+    width: 35px;
+    z-index: 10;
+    transition: right 250ms;
+    padding: 6px;
+    border-radius: 100%;
+    text-align: center;
+    font-size: 27px;
+    border: 3px solid var(--main-bg-color);
+}
+
+    .user-icon.open {
+        right: 230px;
+    }
+
+.sidebar {
+    position: fixed;
+    top: 0;
+    right: -300px;
+    width: 300px;
+    height: 100%;
+    background-color: #333;
+    color: #fff;
+    box-shadow: -2px 0 5px rgba(0, 0, 0, 0.5);
+    transition: right 200ms ease-out;
+    z-index: 9;
+    border-radius: 20px 0px 0px 20px;
+}
+
+.sidebar.open {
+    right: 0;
+}
+
+.sidebar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    margin-left: 25%;
+}
+
+.close-btn {
+    background: none;
+    border: none;
+    color: #fff;
+    font-size: 30px;
+    cursor: pointer;
+}
+
+.sidebar-links {
+    display: flex;
+    flex-direction: column;
+    padding: 0 10px 10px 10px;
+    text-align: left;
+    font-size: 20px;
+    color: #fff;
+    text-decoration: none;
+    text-transform: capitalize;
+}
+
+.sidebar-link {
+    display: flex;
+    flex-direction: column;
+    padding: 0 10px 10px 10px;
+    text-align: left;
+    font-size: 20px;
+    color: #fff;
+    text-decoration: none;
+    text-transform: capitalize;
+}
+
+.sidebar-link:hover {
+    text-decoration: underline;
+    color: #fff;
+}
+
+.bottom {
+    margin-left: 10px;
+}
+
+.thin-grey-line {
+    height: 2px;
+    background-color: grey;
+    margin: 10px 10px;
+}
+
+.film {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 0;
+    height: 0;
+    background-color: rgba(20, 20, 40, 0.2);
+}
+
+.film.open {
+    width: 100vw;
+    height: 100vh;
+    z-index: 8;
+}
