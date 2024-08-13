@@ -58,17 +58,29 @@ const SideBar = () => {
                 className={`user-icon ${open ? 'open' : ''}`} 
                 onClick={() => handleClick()}
                 style={{backgroundColor: 'blue'}}
-            >👤</label>
+            >
+                👤
+            </label>
         )
         userOption = (
             <label htmlFor='logout' onClick={() => handleLogout()}>
-                <Link id='logout' to={''} className='sidebar-link bottom'><p>logout</p></Link>
+                <Link id='logout' to={''} className='sidebar-link bottom'>
+                    logout
+                </Link>
             </label>
         )
 
     } else {
-        icon = <div className={`icon ${open ? 'open' : ''}`} onClick={() => setOpen(true)}>☰</div>
-        userOption = <Link className='sidebar-link bottom' to={'/signup'}>sign up</Link>
+        icon = (
+            <div className={`icon ${open ? 'open' : ''}`} onClick={() => setOpen(true)}>
+                ☰
+            </div>
+        )
+        userOption = (
+            <Link className='sidebar-link bottom' to={'/signup'}>
+                sign up
+            </Link>
+        )
     }
 
     return (
