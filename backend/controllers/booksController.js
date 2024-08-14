@@ -5,32 +5,40 @@ const Book = require('../schemas/Book')
 // @route GET /books
 // @access Private
 const get = async (req, res) => {
-    const p = parseInt(req.query.p, 10) || 0 // page number
-    const q = req.query.q // search query
-    const s = parseInt(req.query.s, 10) || 50 // page size
+    const pageNumber = parseInt(req.query.p, 10) || 0 // page number
+    const query = req.query.q // search query
+    const pageSize = parseInt(req.query.s, 10) || 50 // page size
     const getNumPages = req.query.getNumPages // return number of pages
 
-    // Number of pages yielded by the query 
+    // Get number of pages yielded by the query 
     if (getNumPages) {
         const totalBooks = await Book.find({
             $or: [
-                { author: { $regex: `.*${q}.*`, $options: 'i' } },
-                { title: { $regex: `.*${q}.*`, $options: 'i' } },
+                { 
+                    author: { $regex: `.*${query}.*`, $options: 'i' } 
+                },
+                { 
+                    title: { $regex: `.*${query}.*`, $options: 'i' } 
+                },
             ]})
             .exec()
-        const numPages = Math.ceil(totalBooks?.length / s)
+        const numPages = Math.ceil(totalBooks?.length / pageSize)
 
         return res.json({numPages})
     }
 
-    // Query the book pages
+    // Query a page of books
     const books = await Book.find({
         $or: [
-            { author: { $regex: `.*${q}.*`, $options: 'i' } },
-            { title: { $regex: `.*${q}.*`, $options: 'i' } },
+            { 
+                author: { $regex: `.*${query}.*`, $options: 'i' }
+            },
+            { 
+                title: { $regex: `.*${query}.*`, $options: 'i' }
+            },
         ]})
-        .skip(p * s)
-        .limit(s)
+        .skip(pageNumber * pageSize)
+        .limit(pageSize)
         .exec()
     
     if (!books.length) {
@@ -38,11 +46,8 @@ const get = async (req, res) => {
     }
 
     return res.json({books})
-    
-    
-    
-
 }
+
 
 
 // @desc Create new book
@@ -62,6 +67,7 @@ const create = async (req, res) => {
         return res.status(409).json({ message: 'Duplicate book found' })
     }
 
+    // Create book object
     const bookObj = { title, author }
     const book = await Book.create(bookObj)
 
@@ -72,6 +78,8 @@ const create = async (req, res) => {
         res.status(400).json({ message: 'Error creating book: Invalid book data recieved' })
     }
 }
+
+
 
 // @desc Update book
 // @route PATCH /books
@@ -84,20 +92,19 @@ const update = async (req, res) => {
         return res.status(400).json({ message: 'An id, title, and author are required' })
     }
 
+    // Check if book exists
     const book = await Book.findOne({ id }).exec()
     if (!book) {
         return res.status(400).json({ message: 'Book not found'})
     }
 
-    const titleUC = title.toUpperCase()
-    const authorUC = author.toUpperCase()
     // Check for duplicate
-    const duplicate = await Book.findOne({ "title": titleUC, "author": authorUC }).exec()
-    // Allow updates to the original book
-    if (duplicate && duplicate?.title.toString() == title && duplicate?.author.toString() == author) {
+    const duplicate = await Book.findOne({ "title": title, "author": author }).exec()
+    if (duplicate) {
         return res.status(409).json({ message: 'Duplicate title and author' })
     }
 
+    // Update book info
     book.title = title
     book.author = author
 
@@ -107,19 +114,21 @@ const update = async (req, res) => {
     res.status(201).json({ message: `${updatedBook.title} updated`})
 }
 
+
+f
 // @desc Delete book
 // @route DELETE /books
 // @access Private
 const remove = async (req, res) => {
     const { id } = req.body
 
+    // Confirm data
     if (!id) {
         return res.status(400).json({ message: 'Book id is required.'})
     }
 
+    // Delete book
     const deletedBook = await Book.findByIdAndRemove({ _id: id }).lean().exec()
-
-    // Check for book
     if (!deletedBook) {
         return res.status(400).json({ message: `Book not found` })
     }
