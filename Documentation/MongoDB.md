@@ -1,0 +1,76 @@
+# MongoDB Database Documentation
+
+## Overview
+
+This document provides an overview of the different objects (collections and documents) stored in the MongoDB database for the project. Each collection contains various documents that represent different entities within the project.
+
+## Collections
+
+### 1. **Users Collection**
+   - **Description:** Stores information about the users registered in the system.
+   - **Document Structure:**
+     ```json
+     {
+       "_id": "ObjectId",        // Unique identifier for the user
+       "username": "string",     // Unique username chosen by the user
+       "email": "string",        // User's email address
+       "password": "string",     // Hashed password for security
+       "createdAt": "Date",      // Timestamp when the user was created
+       "roles": ["string"],      // Array of roles assigned to the user (e.g., "admin", "user")
+       "profile": {
+         "firstName": "string",  // User's first name
+         "lastName": "string",   // User's last name
+         "avatar": "string"      // URL to the user's avatar image
+       },
+       "catalogues": ["ObjectId"], // Catalogues created or saved by the user
+       "groups": ["ObjectId"]   // Groups where the user is a member or admin
+     }
+     ```
+
+### 2. **Books Collection**
+   - **Description:** Stores information about individual books available in the system.
+   - **Document Structure:**
+     ```json
+     {
+       "_id": "ObjectId",        // Unique identifier for the book
+       "title": "string",        // Title of the book
+       "author": "string",       // Author of the book
+       "isbn": "string",         // ISBN number of the book
+       "publishedDate": "Date",  // Publication date of the book
+       "genre": "string",        // Genre of the book (e.g., "Fiction", "Non-fiction")
+       "summary": "string",      // A brief summary of the book
+       "coverImage": "string",   // URL to the cover image of the book
+       "cost": "number",         // Cost of the book
+       "link": "string"          // Link to the book pdf or purchase page
+     }
+     ```
+
+### 3. **Catalogues Collection**
+   - **Description:** Stores information about catalogues, which are collections of books.
+   - **Document Structure:**
+     ```json
+     {
+       "_id": "ObjectId",        // Unique identifier for the catalogue
+       "name": "string",         // Name of the catalogue
+       "description": "string",  // Description of the catalogue
+       "created": "Date",        // Timestamp when the catalogue was created
+       "updated": "Date",        // Timestamp when the catalogue was last modified
+       "books": ["ObjectId"],    // Array of book IDs included in the catalogue
+       "owner": "ObjectId",      // Reference to the user who created the catalogue
+       "color": "string"         // Color category of the catalogue (e.g. "Blue", "Violet")
+     }
+     ```
+
+### 4. **Groups Collection**
+   - **Description:** Stores information about groups of users within the system.
+   - **Document Structure:**
+     ```json
+     {
+       "_id": "ObjectId",        // Unique identifier for the group
+       "name": "string",         // Name of the group
+       "description": "string",  // Description of the group
+       "createdAt": "Date",      // Timestamp when the group was created
+       "members": ["ObjectId"],  // Array of user IDs who are members of the group
+       "admins": ["ObjectId"]    // Array of user IDs who are admins of the group
+     }
+     ```
