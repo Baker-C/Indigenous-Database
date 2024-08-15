@@ -2,9 +2,14 @@ const mongoose = require('mongoose')
 const { Schema } = mongoose;
 
 const catalogueSchema = new Schema({
-    title: {
+    name: {
         type: String,
+        maxLength: [30, 'Name can not be more than 30 characters.'],
         required: true
+    },
+    description: {
+        type: String,
+        maxLength: [300, 'Description can not be longer than 300 characters.']
     },
     owner: {
         type: String,
@@ -18,7 +23,7 @@ const catalogueSchema = new Schema({
         type: Date,
         default: Date.now
     },
-    lastUpdated: {
+    updated: {
         type: Date,
         default: Date.now
     },
@@ -26,7 +31,8 @@ const catalogueSchema = new Schema({
         type: String,
         required: true,
         default: 'LightSteelBlue',
-        enum: ['LightSteelBlue', 'DodgerBlue', 'SteelBlue', 'LightSalmon', 'LightPink', 'Violet', 'SeaGreen', 'MediumSpringGreen']
+        enum: ['LightSteelBlue', 'DodgerBlue', 'SteelBlue', 'LightSalmon', 
+            'LightPink', 'Violet', 'SeaGreen', 'MediumSpringGreen']
     }
 })
 
