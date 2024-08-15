@@ -15,7 +15,7 @@ This document provides an overview of the different objects (collections and doc
        "username": "string",     // Unique username chosen by the user
        "email": "string",        // User's email address
        "password": "string",     // Hashed password for security
-       "createdAt": "Date",      // Timestamp when the user was created
+       "created": "Date",        // Timestamp when the user was created
        "roles": ["string"],      // Array of roles assigned to the user (e.g., "admin", "user")
        "profile": {
          "firstName": "string",  // User's first name
@@ -35,13 +35,14 @@ This document provides an overview of the different objects (collections and doc
        "_id": "ObjectId",        // Unique identifier for the book
        "title": "string",        // Title of the book
        "author": "string",       // Author of the book
+       "description": "string",  // Description of the book 
        "isbn": "string",         // ISBN number of the book
        "publishedDate": "Date",  // Publication date of the book
        "genre": "string",        // Genre of the book (e.g., "Fiction", "Non-fiction")
-       "summary": "string",      // A brief summary of the book
        "coverImage": "string",   // URL to the cover image of the book
        "cost": "number",         // Cost of the book
-       "link": "string"          // Link to the book pdf or purchase page
+       "link": "string",         // Link to the book pdf or purchase page
+       "created": "Date"         // Date that the book was added to the database
      }
      ```
 
@@ -53,10 +54,10 @@ This document provides an overview of the different objects (collections and doc
        "_id": "ObjectId",        // Unique identifier for the catalogue
        "name": "string",         // Name of the catalogue
        "description": "string",  // Description of the catalogue
+       "owner": "ObjectId",      // Reference to the user who created the catalogue
+       "entries": ["ObjectId"],    // Array of book IDs included in the catalogue
        "created": "Date",        // Timestamp when the catalogue was created
        "updated": "Date",        // Timestamp when the catalogue was last modified
-       "books": ["ObjectId"],    // Array of book IDs included in the catalogue
-       "owner": "ObjectId",      // Reference to the user who created the catalogue
        "color": "string"         // Color category of the catalogue (e.g. "Blue", "Violet")
      }
      ```
@@ -69,8 +70,8 @@ This document provides an overview of the different objects (collections and doc
        "_id": "ObjectId",        // Unique identifier for the group
        "name": "string",         // Name of the group
        "description": "string",  // Description of the group
-       "createdAt": "Date",      // Timestamp when the group was created
-       "members": ["ObjectId"],  // Array of user IDs who are members of the group
-       "admins": ["ObjectId"]    // Array of user IDs who are admins of the group
+       "created": "Date",        // Timestamp when the group was created
+       "admins": ["ObjectId"],   // Array of user IDs who are admins of the group
+       "members": ["ObjectId"]   // Array of user IDs who are members of the group
      }
      ```
