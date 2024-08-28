@@ -4,6 +4,32 @@
 
 This document provides an overview of the different objects (collections and documents) stored in the MongoDB database for the project. Each collection contains various documents that represent different entities within the project.
 
+
+## Clusters
+
+### 1. **Cluster0**
+
+This is the first and only cluster made for the project. I will transfer it to another name eventually but for now this is the only cluster being used. This is the most cost effective solution for the project because there is only one free teir cluster allowed per person .
+
+## Databases
+
+### 1. **test**
+
+Similarly this is the first database made for the project. I will use a different database called DeploymentDB once deployment occurs. It holds all of the current development data before the schemas were updated.
+
+### 3. **Deployment**
+
+This is the deployment database. It will be in use once deployment occurs.
+
+### 2. **DevelopmentDB**
+
+This is the new dev database. It will hold all future development data from after the schema changes.
+
+### 3. **TestDB**
+
+This is the test database. It holds all data used during testing of the API.
+
+
 ## Collections
 
 ### 1. **Users Collection**
