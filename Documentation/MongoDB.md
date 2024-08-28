@@ -75,3 +75,23 @@ This document provides an overview of the different objects (collections and doc
        "members": ["ObjectId"]   // Array of user IDs who are members of the group
      }
      ```
+
+## Controllers
+
+### 1. **Users Controller**
+   - **Description:** REST endpoint specifications for users.
+
+#### GET
+   - **GET description:** A username, userId, and password can be provided. If no username or userId is sent, then a list of all users is returned. This is mainly used for testing during development. A username of userId can be provided to query for a user. In both cases, a list of usernames or userIds also returns the list of queried users. 
+   
+   All users are returned with a populated catalogues field.
+
+   Queries should NEVER return emails or passwords for security purposes.
+
+
+
+#### CREATE
+   - **CREATE description:** A username, email, password, rePassword, firstName, and lastName are all required for creation. The pass and rePass must match. A new Saved Books catalogue is added. (Will need to adjust for new types of entries in the future). 
+
+#### UPDATE
+   - **UPDATE description:** A username is required to check what 

@@ -15,15 +15,21 @@ const groupSchema = new mongoose.Schema({
         type: Date,
         default: Date.now
     },
-    admins: [{
-        type: Schema.Types.ObjectId,
-        ref: 'User',
-        required: true
-    }],
-    members: [{
-        type: Schema.Types.ObjectId,
-        ref: 'User'
-    }]
+    members: {
+        admins: [{
+            type: Schema.Types.ObjectId,
+            ref: 'User',
+            required: true
+        }],
+        accepted: [{
+            type: Schema.Types.ObjectId,
+            ref: 'User'
+        }],
+        queued: [{
+            type: Schema.Types.ObjectId,
+            ref: 'User'
+        }]
+    }
 })
 
 module.exports = mongoose.model('Group', groupSchema) 

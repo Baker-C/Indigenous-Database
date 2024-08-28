@@ -10,11 +10,19 @@ const ObjId = mongoose.Types.ObjectId
 // @route GET /users
 // @access Private
 const get = async (req, res) => {
-    const { username } = req.body
+    const { username, userId } = req.body
 
-    // returns all users if no username specified
-    if (!username) {
-        const users = await User.find().select('-password').populate('catalogues').lean().exec()
+    // returns all users if no username and no userId specified
+    ///// DEV PURPOSES
+    ///// COMMENT OUT BEFORE DEPLOYMENT
+    if (!username && !userId) {
+        const users = await User
+        .find()
+        .select('-password')
+        .populate('catalogues')
+        .lean()
+        .exec()
+
         if (users?.length) {
             return res.json(users)
         } else {
@@ -22,16 +30,49 @@ const get = async (req, res) => {
         }
     }
 
-    if (!username || !password ) {
-        return res.status(400).json({ message: 'A password is required if username is provided' })
+    // returns all users in list if username or userId is a list
+    if (Array.isArray(username) || Array.isArray(userId)) {
+        const users = await User
+        .find({
+            $or: [
+                { username: { $in : username } },
+                { _id: { $in : userId } }
+            ]
+        })
+        .select('-email -password')
+        .lean()
+        .exec()
+
+        if (users?.length) {
+            return res.json(users)
+        } else {
+            return res.status(400).json({ message: 'No users found' })
+        }
     }
 
-    const user = await User.find().populate('catalogues').lean().exec()
-    if (!user) {
-        return res.status(400).json({ message: 'User not found' })
+    // returns a single user if username or userId is given
+    if (username || userId) {
+        const user = await User
+        .find({ 
+            $or: [
+                { username: username },
+                { _id: userId }
+            ]
+        })
+        .select('-email -password')
+        .populate('catalogues')
+        .lean()
+        .exec()
+
+        if (!user) {
+            return res.status(400).json({ message: 'User not found' })
+        } else {
+            return res.json(user)
+        }
     }
 
-    res.json(user)
+    // if no username or userId is found return with an error
+    return res.status(500).json({ message: 'Server error' })
 }
 
 
@@ -39,30 +80,37 @@ const get = async (req, res) => {
 // @route POST /users
 // @access Private
 const create = async (req, res) => {
-    const { username, email, password, rePassword } = req.body
+    const { username, email, password, rePassword, firstName, lastName } = req.body
 
     // Confirm data
-    if ( !username || !email || !password || !rePassword ) {
-        return res.status(400).json({ message: 'A username, email, and password rePassword are required' })
+    if ( !username || !email || !password || !rePassword || !firstName || !lastName ) {
+        return res.status(400).json({ message: 'A firstName, lastName, username, email, and password rePassword are required' })
     }
 
     // Check that passwords match
-    if (!(password === rePassword)) {
+    if (password !== rePassword) {
         return res.status(400).json({ message: 'The password and re-password need to match' })
     }
 
-    // Check for duplicates
-    const duplicate = await User.findOne({ username }).lean().exec()
+    // Check for duplicate usernames or emails
+    const duplicate = await User
+    .findOne({ username: username })
+    .lean()
+    .exec()
     if (duplicate) {
         return res.status(409).json({ message: 'Duplicate username found' })
     }
 
     // User object with hashed pass
     const hashedPwd = await bcrypt.hash(password, 10) // Salt rounds = 10
-    const userObj = { 
+    const userObj = {
         username, 
         email, 
-        "password": hashedPwd 
+        "password": hashedPwd,
+        "profile" : {
+            firstName,
+            lastName
+        }
     }
 
     const user = await User.create(userObj)
@@ -79,6 +127,8 @@ const create = async (req, res) => {
         "owner": user._id,
         "date": new Date()
     }
+
+    // save to users profile
     const yourBooks = await Catalogue.create(yourBooksObj)
     if (!yourBooks) {
         await User.findByIdAndDelete(user._id).lean().exec()
@@ -96,45 +146,76 @@ const create = async (req, res) => {
 // @route PATCH /users
 // @access Private
 const update = async (req, res) => {
-    const { username, newUsername, email, catalogueId, friendId, groupId } = req.body
+    const { username, userId, newUsername, email, catalogueId, removeCatalogueId, groupId, removeGroupId } = req.body
 
     // Confirm data
     if ( !username ) {
-        return res.status(400).json({ message: 'A username, password, newUsername, newEmail, and newPassword are required' })
+        return res.status(400).json({ message: 'A username is required for udates' })
     }
 
-    const user = await User.findOne({ username }).exec()
+    // check if user exists
+    const user = await User
+    .findOne({
+        $or: [
+            { username: username },
+            { _id: userId }
+        ]
+    })
+    .exec()
     if (!user) {
         return res.status(400).json({ message: 'User not found'})
     }
 
-    // Check for duplicate
-    const duplicate = await User.findOne({ newUsername }).lean().exec()
-    // Allow updates to the original user
+    // Check for duplicate username or email
+    const duplicate = await User
+    .findOne({ newUsername })
+    .lean()
+    .exec()
     if (duplicate && duplicate?.username?.toString() === newUsername) {
         return res.status(409).json({ message: 'Duplicate username' })
     }
 
+    // set new info if given
     if (newUsername) user.username = newUsername
+
     if (email) user.email = email
-    if (catalogueId) {
-        const catalogue = await Catalogue.findById(catalogueId).lean().exec()
+    
+    if (catalogueId || removeCatalogueId) {
+        // check that the catalogue exists
+        const catalogue = await Catalogue
+        .findById(catalogueId)
+        .lean()
+        .exec()
         if (!catalogue) {
             return res.status(400).json({ message: 'Catalogue not found'})
         }
+
+        // add/delete catalogues from users' list
         const catalogueObjId = new ObjId(catalogueId)
-        user.catalogues = { ...user.catalogues, catalogueObjId }
+        if (catalogueId) {
+            user.catalogues = [ ...user.catalogues, catalogueObjId ]            
+        } else if (removeCatalogueId) {
+            user.catalogues = user.catalogues?.filter(id => id !== removeCatalogueId)
+        }
+
     }
-    if (groupId) {
-        const group = await Group.findById(groupId).lean().exec()
+    
+    if (groupId || removeGroupId) {
+        // check that the group exists
+        const group = await Group
+        .findById(groupId)
+        .lean()
+        .exec()
         if (!group) {
             return res.status(400).json({ message: 'Group not found'})
-        }        
+        }
+
+        // add/delete groups from users' list
         const groupObjId = new ObjId(groupId)
-        if (user.groups?.includes(groupId)) {
-            user.groups = user.groups?.filter(f => f !== groupObjId)
-        } else {
-            user.groups = { ...user.groups, groupObjId }
+        if (groupId) {
+            user.groups = [ ...user.groups, groupObjId ]
+        } else if (removeGroupId) {
+            user.groups = user.groups?.filter(id => id !== removeGroupId)
         }
     }
 
@@ -148,48 +229,66 @@ const update = async (req, res) => {
 // @route DELETE /users
 // @access Private
 const remove = async (req, res) => {
-    const { username, id } = req.body
+    const { username, userId } = req.body
 
-    if (!username && !id) {
+    // confirm data
+    if (!username && !userId) {
         return res.status(400).json({ message: 'Username or id is required'})
     }
 
-    let user
-
-    // Check for user
-    if (username) {
-        user = await User.findOne({ username: username }).lean().exec()
-    } else {
-        user = await User.findById(id).lean().exec()
-    }
-
+    // Check is user exists
+    const user = await User
+    .findOne({
+        $or: [
+            { username: username },
+            { _id: userId }
+        ]
+    })
+    .populate({ 
+        path: 'catalogues',
+        select: 'owner'
+    })
+    .lean()
+    .exec()
     if (!user) {
         return res.status(400).json({ message: 'User not found' })
     }
 
-    // Delete from all other user's catalogue lists
-    for (let catalogueId of user.catalogues) {
-        const updatedUsers = await User.updateMany({}, { $pull: { catalogues: new ObjId(catalogueId) }})
-        if (!updatedUsers) {
-            return res.status(400).json({ message: `Catalogues of other users not updated with delete: ${catalogueId}` })
+    // Delete user owned catalogues
+    for (let catalogue of user.catalogues) {
+        if (catalogue.owner === user._id) {
+            const updatedUsers = await User
+            .updateMany({}, { $pull: { catalogues: new ObjId(catalogue._id) }})   
+            if (!updatedUsers) {
+                return res.status(400).json({ message: `Catalogues of other users not updated with delete: ${catalogue._id}` })
+            }
         }
-        deletedCatalogue = await Catalogue.findByIdAndRemove(catalogueId).lean().exec()
-        if (!updatedUsers) {
-            return res.status(400).json({ message: `Unable to delete catalogue: ${catalogueId}` })
+        deletedCatalogue = await Catalogue
+        .findByIdAndRemove(catalogue._id)
+        .lean()
+        .exec()
+        if (!deletedCatalogue) {
+            return res.status(400).json({ message: `Unable to delete catalogue: ${catalogue._id}` })
         }
     }
 
-    const updatedUsers = await Group.updateMany({}, { $pull: { members: new ObjId(id) }})
+    // Delete user from group lists
+    const updatedUsers = await Group
+    .updateMany({}, { $pull: { members: new ObjId(id) }})
     if (!updatedUsers) {
         return res.status(400).json({ message: `Groups not updated with delete` })
     }
 
-    let deletedUser
-    if (id) {
-        deletedUser = await User.findByIdAndRemove(id).lean().exec()
-    } else if (username) {
-        deletedUser = await User.findOneAndRemove({ "username": username }).lean().exec()
-    }
+    // delete user
+    const deletedUser = await User
+    .findOneAndRemove({
+        $or: [
+            { username: username },
+            { _id: userId }
+        ]
+    })
+    .lean()
+        .exec()
     if (!deletedUser) {
         return res.status(400).json({ message: 'Failed to delete user' })
     }

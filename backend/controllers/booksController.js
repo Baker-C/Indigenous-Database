@@ -5,15 +5,15 @@ const Book = require('../schemas/Book')
 // @route GET /books
 // @access Private
 const get = async (req, res) => {
-    const pageNumber = parseInt(req.query.p, 10) || 0 // page number
+    const pageNumber = parseInt(req.query.p, 10) || 0
     const query = req.query.q // search query
-    const pageSize = parseInt(req.query.s, 10) || 50 // page size
-    const getNumPages = req.query.getNumPages // return number of pages
+    const pageSize = parseInt(req.query.s, 10) || 50
+    const getNumPages = req.query.getNumPages // boolean
 
     // Get number of pages yielded by the query 
     if (getNumPages) {
-        const totalBooks = await Book.find({
-            $or: [
+        const numBooks = await Book.find({
+            $or : [
                 { 
                     author: { $regex: `.*${query}.*`, $options: 'i' } 
                 },
@@ -21,13 +21,14 @@ const get = async (req, res) => {
                     title: { $regex: `.*${query}.*`, $options: 'i' } 
                 },
             ]})
+            .countDocuments()
             .exec()
-        const numPages = Math.ceil(totalBooks?.length / pageSize)
+        const numPages = Math.ceil(numBooks / pageSize)
 
         return res.json({numPages})
     }
 
-    // Query a page of books
+    // Query a single page of books
     const books = await Book.find({
         $or: [
             { 
@@ -41,7 +42,7 @@ const get = async (req, res) => {
         .limit(pageSize)
         .exec()
     
-    if (!books.length) {
+    if (!books) {
         return res.status(400).json({ message: 'Books not found' })
     }
 
@@ -54,28 +55,44 @@ const get = async (req, res) => {
 // @route POST /books
 // @access Private
 const create = async (req, res) => {
-    const { title, author } = req.body
+    const { title, author, description, isbn, publishedDate, genre, coverImage, cost, link } = req.body
     
-    // Confirm data
-    if ( !title || !author ) {
-        return res.status(400).json({ message: 'A title and author are required' })
+    // Confirm required data
+    if ( !title || !author || !cost || !link ) {
+        return res.status(400).json({ message: 'A title, author, cost, and link are required' })
     }
 
     // Check for duplicates
-    const duplicate = await Book.findOne({ title, author }).lean().exec()
+    const duplicate = await Book.findOne({ title, author })
+    .lean()
+    .exec()
     if (duplicate) {
         return res.status(409).json({ message: 'Duplicate book found' })
     }
 
     // Create book object
-    const bookObj = { title, author }
-    const book = await Book.create(bookObj)
+    const bookObj = { title, author, cost, link }
 
-    // Check for created
+    if (description) bookObj.description = description
+
+    if (isbn) bookObj.isbn = isbn
+
+    if (publishedDate) bookObj.publishedDate = publishedDate
+
+    if (genre && genre.isArray()) {
+        bookObj.genre = genre
+    } else if (genre && !genre.isArray()) {
+        bookObj.genre = [ genre ]
+    }
+
+    if (coverImage) bookObj.coverImage = coverImage
+    
+    // Create book in database
+    const book = await Book.create(bookObj)
     if (book) {
         res.status(201).json({ message: `New book title: ${title} id: ${book._id} created` })
     } else {
-        res.status(400).json({ message: 'Error creating book: Invalid book data recieved' })
+        res.status(400).json({ message: 'Error creating book: Invalid  data' })
     }
 }
 
@@ -85,11 +102,11 @@ const create = async (req, res) => {
 // @route PATCH /books
 // @access Private
 const update = async (req, res) => {
-    const { _id, title, author } = req.body
+    const { _id, title, author, description, isbn, publishedDate, genre, coverImage, cost, link } = req.body
 
     // Confirm data
-    if ( !_id || !title || !author ) {
-        return res.status(400).json({ message: 'An id, title, and author are required' })
+    if ( !_id && (!title && !author)) {
+        return res.status(400).json({ message: 'An id or title and author are required' })
     }
 
     // Check if book exists
@@ -104,7 +121,7 @@ const update = async (req, res) => {
         return res.status(409).json({ message: 'Duplicate title and author' })
     }
 
-    // Update book info
+    // Update book info if given
     book.title = title
     book.author = author
 
@@ -115,7 +132,7 @@ const update = async (req, res) => {
 }
 
 
-f
+
 // @desc Delete book
 // @route DELETE /books
 // @access Private

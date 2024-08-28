@@ -27,12 +27,16 @@ const get = async (req, res) => {
 
     if (userId && userId !== 'undefined') {
         // Checks if user exists
-        const user = await User.findById(userId)
-            .populate({ path: 'groups',
-                populate: {
-                    path: 'members'
-                }
-             }).lean().exec()
+        const user = await User
+        .findById(userId)
+        .populate({ 
+            path: 'groups',
+            populate: {
+                path: 'members'
+            }
+        })
+        .lean()
+        .exec()
         if (!user) {
             return res.status(400).json({ message: 'Group not found' })
         }
