@@ -18,12 +18,12 @@ const userSchema = new mongoose.Schema({
         type: Date,
         default: Date.now
     },
-    roles: {
+    roles: [{
         type: String,
         required: true,
         enum: ['Admin', 'User'],
         default: 'User'
-    },
+    }],
     profile: {
         firstName: {
             type: String,

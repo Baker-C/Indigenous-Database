@@ -8,7 +8,7 @@ const errorHandler = require('./middleware/errorHandler')
 const cookieParser = require('cookie-parser')
 const cors = require('cors')
 const corsOptions = require('./config/corsOptions')
-const connectDB = require('./config/dbConn')
+const { connectDB } = require('./config/dbConn')
 const PORT = process.env.PORT || 3500
 
 console.log(process.env.NODE_ENV)
@@ -45,4 +45,16 @@ app.all('*', (req, res) => {
 
 app.use(errorHandler)
 
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`))
+if (process.env.NODE_ENV !== 'test') {
+    app.listen(PORT, () => console.log(`Server running on port ${PORT}`))
+}
+
+process.on('SIGINT', () => {
+    console.log('Shutting down the server...')
+    app.close(() => {
+        console.log('Server closed.')
+        process.exit(0)
+    })
+})
+
+module.exports = app

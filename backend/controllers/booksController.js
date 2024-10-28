@@ -5,14 +5,21 @@ const Book = require('../schemas/Book')
 // @route GET /books
 // @access Private
 const get = async (req, res) => {
+    /* pagination queries */
     const pageNumber = parseInt(req.query.p, 10) || 0
-    const query = req.query.q // search query
-    const pageSize = parseInt(req.query.s, 10) || 50
     const getNumPages = req.query.getNumPages // boolean
+
+    /* search queries */
+    const query = req.query.q // search query
+
+    /* end of queries */
+
+    const pageSize = 100
 
     // Get number of pages yielded by the query 
     if (getNumPages) {
-        const numBooks = await Book.find({
+        const numBooks = await Book
+        .find({
             $or : [
                 { 
                     author: { $regex: `.*${query}.*`, $options: 'i' } 
@@ -20,16 +27,19 @@ const get = async (req, res) => {
                 { 
                     title: { $regex: `.*${query}.*`, $options: 'i' } 
                 },
-            ]})
-            .countDocuments()
-            .exec()
+            ]
+        })
+        .countDocuments()
+        .lean()
+        .exec()
         const numPages = Math.ceil(numBooks / pageSize)
 
         return res.json({numPages})
     }
 
     // Query a single page of books
-    const books = await Book.find({
+    const books = await Book
+    .find({
         $or: [
             { 
                 author: { $regex: `.*${query}.*`, $options: 'i' }
@@ -37,10 +47,12 @@ const get = async (req, res) => {
             { 
                 title: { $regex: `.*${query}.*`, $options: 'i' }
             },
-        ]})
-        .skip(pageNumber * pageSize)
-        .limit(pageSize)
-        .exec()
+        ]
+    })
+    .skip(pageNumber * pageSize)
+    .limit(pageSize)
+    .lean()
+    .exec()
     
     if (!books) {
         return res.status(400).json({ message: 'Books not found' })
@@ -63,8 +75,17 @@ const create = async (req, res) => {
     }
 
     // Check for duplicates
-    const duplicate = await Book.findOne({ title, author })
-    .lean()
+    const duplicate = await Book
+    .findOne({
+        $and: [
+            { 
+                author: { $regex: `.*${author}.*`, $options: 'i' }
+            },
+            { 
+                title: { $regex: `.*${title}.*`, $options: 'i' }
+            },
+        ]
+    })
     .exec()
     if (duplicate) {
         return res.status(409).json({ message: 'Duplicate book found' })
@@ -79,9 +100,9 @@ const create = async (req, res) => {
 
     if (publishedDate) bookObj.publishedDate = publishedDate
 
-    if (genre && genre.isArray()) {
+    if (genre?.length && genre?.isArray()) {
         bookObj.genre = genre
-    } else if (genre && !genre.isArray()) {
+    } else if (genre && !genre?.isArray()) {
         bookObj.genre = [ genre ]
     }
 
@@ -102,31 +123,65 @@ const create = async (req, res) => {
 // @route PATCH /books
 // @access Private
 const update = async (req, res) => {
-    const { _id, title, author, description, isbn, publishedDate, genre, coverImage, cost, link } = req.body
+    const { id, title, author, description, isbn, publishedDate, genre, coverImage, cost, link } = req.body
 
     // Confirm data
-    if ( !_id && (!title && !author)) {
-        return res.status(400).json({ message: 'An id or title and author are required' })
+    if (!id) {
+        return res.status(400).json({ message: 'An id is required to update' })
     }
 
-    // Check if book exists
-    const book = await Book.findOne({ id }).exec()
+    // Confirm that book exists
+   const book = Book
+   .findById({ id })
+   .exec()
     if (!book) {
         return res.status(400).json({ message: 'Book not found'})
     }
 
-    // Check for duplicate
-    const duplicate = await Book.findOne({ "title": title, "author": author }).exec()
-    if (duplicate) {
-        return res.status(409).json({ message: 'Duplicate title and author' })
+
+
+    // Check for duplicate if title or author are different
+    if ( !(title == book.title) || !(author == book.author) ) {
+        const duplicate = await Book
+        .findOne({
+            $and: [
+                { 
+                    author: { $regex: `.*${author}.*`, $options: 'i' }
+                },
+                { 
+                    title: { $regex: `.*${title}.*`, $options: 'i' }
+                },
+            ]
+        })
+        .exec()
+        if (duplicate) {
+            return res.status(409).json({ message: 'Duplicate title and author found' })
+        }
     }
 
     // Update book info if given
-    book.title = title
-    book.author = author
+    if (title) book.title = title
+    
+    if (author) book.author = author
+
+    if (description) book.description = description
+
+    if (isbn) book.isbn = isbn
+
+    if (publishedDate) book.publishedDate = publishedDate
+
+    if (genre) book.genre = genre
+
+    if (coverImage) book.coverImage = coverImage
+
+    if (cost) book.cost = cost
+
+    if (link) book.link = link
 
     // Confirm update
     const updatedBook = await book.save()
+
+    //  !!!!!!!!!!!!!!!!! NEEDS AND ERROR CHECK HERE !!!!!!!!!!!!!!!!!!!!
 
     res.status(201).json({ message: `${updatedBook.title} updated`})
 }
@@ -144,8 +199,19 @@ const remove = async (req, res) => {
         return res.status(400).json({ message: 'Book id is required.'})
     }
 
+    //  Delete book from all catalogues
+    const updatedUsers = await Catalogue
+    .updateMany({}, { 
+        $pull: { 
+            entries: new ObjId(id) 
+        }
+    })
+
     // Delete book
-    const deletedBook = await Book.findByIdAndRemove({ _id: id }).lean().exec()
+    const deletedBook = await Book
+    .findByIdAndRemove( id )
+    .lean()
+    .exec()
     if (!deletedBook) {
         return res.status(400).json({ message: `Book not found` })
     }

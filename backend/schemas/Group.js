@@ -9,7 +9,13 @@ const groupSchema = new mongoose.Schema({
     },
     description: {
         type: String,
+        default: '',
         maxLength: [300, 'Description can not be longer than 300 characters.']
+    },
+    privacy: {
+        type: String,
+        default: 'CLOSED',
+        enum: ['OPEN', 'CLOSED']
     },
     created: {
         type: Date,
@@ -19,14 +25,17 @@ const groupSchema = new mongoose.Schema({
         admins: [{
             type: Schema.Types.ObjectId,
             ref: 'User',
+            default: [],
             required: true
         }],
         accepted: [{
             type: Schema.Types.ObjectId,
+            default: [],
             ref: 'User'
         }],
         queued: [{
             type: Schema.Types.ObjectId,
+            default: [],
             ref: 'User'
         }]
     }
