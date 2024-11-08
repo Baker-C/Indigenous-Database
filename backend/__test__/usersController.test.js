@@ -1,3 +1,4 @@
+const jwt = require('jsonwebtoken')
 const request = require('supertest')
 const app = require('../server.js')
 const { disconnectDB  } = require('../config/dbConn.js')
@@ -235,4 +236,230 @@ describe('Users API', () => {
         })
     })
 
+
+
+    describe("UPDATE /users", () => {
+
+        // Create a valid token with a test secret and payload
+        const testUsername = "username01"
+        const token = jwt.sign(
+            { username: testUsername },
+            process.env.ACCESS_TOKEN_KEY, 
+            { expiresIn: '30s' }
+        )
+
+        test('should return success 204', async () => {
+            let response
+            
+            response = await request(app)
+            .patch('/users')
+            .set('Authorization', `Bearer ${token}`)
+            .send({
+                userId: "100000000000000000000000",
+                username: "username01",
+                email: "newEmail",
+                firstName: "newFirstName",
+                lastName: "newLastName"
+            })
+            expect(response.statusCode).toBe(204)
+
+            response = await request(app)
+            .patch('/users')
+            .set('Authorization', `Bearer ${token}`)
+            .send({
+                userId: "100000000000000000000000",
+                username: "username01",
+                email: "newEmail",
+                firstName: "newFirstName",
+                lastName: "newLastName",
+                addCatalogues: "700000000000000000000000"
+            })
+            expect(response.statusCode).toBe(204)
+
+            response = await request(app)
+            .patch('/users')
+            .set('Authorization', `Bearer ${token}`)
+            .send({
+                userId: "100000000000000000000000",
+                username: "username01",
+                email: "newEmail",
+                firstName: "newFirstName",
+                lastName: "newLastName",
+                addCatalogues: ["700000000000000000000000"]
+            })
+            expect(response.statusCode).toBe(204)
+
+            response = await request(app)
+            .patch('/users')
+            .set('Authorization', `Bearer ${token}`)
+            .send({
+                userId: "100000000000000000000000",
+                username: "username01",
+                email: "newEmail",
+                firstName: "newFirstName",
+                lastName: "newLastName",
+                delCatalogues: "600000000000000000000000"
+            })
+            expect(response.statusCode).toBe(204)
+
+            response = await request(app)
+            .patch('/users')
+            .set('Authorization', `Bearer ${token}`)
+            .send({
+                userId: "100000000000000000000000",
+                username: "username01",
+                email: "newEmail",
+                firstName: "newFirstName",
+                lastName: "newLastName",
+                delCatalogues: ["600000000000000000000000"]
+            })
+            expect(response.statusCode).toBe(204)
+        })
+
+        test('should return error 400 from no userId provided', async () => {
+            const response = await request(app)
+            .patch('/users')
+            .set('Authorization', `Bearer ${token}`)
+            .send({
+                username: "username01",
+                email: "newEmail",
+                firstName: "newFirstName",
+                lastName: "newLastName"
+            })
+            
+            expect(response.statusCode).toBe(400)
+        })
+
+        test('should return error 400 if userId does not exist', async () => {
+            const response = await request(app)
+            .patch('/users')
+            .set('Authorization', `Bearer ${token}`)
+            .send({
+                userId: "999999000000000000000000",
+                username: "username01",
+                email: "newEmail",
+                firstName: "newFirstName",
+                lastName: "newLastName"
+            })
+            
+            expect(response.statusCode).toBe(400)
+        })
+
+        test('should return 401 if user !== jwt token user', async () => {
+            const response = await request(app)
+            .patch('/users')
+            .set('Authorization', `Bearer ${token}`)
+            .send({
+                userId: "200000000000000000000000",
+                username: "username02",
+                email: "newEmail",
+                firstName: "newFirstName",
+                lastName: "newLastName"
+            })
+            
+            expect(response.statusCode).toBe(401)
+        })
+
+        test('should return 409 if a duplicate username is found', async () => {
+            const response = await request(app)
+            .patch('/users')
+            .set('Authorization', `Bearer ${token}`)
+            .send({
+                userId: "100000000000000000000000",
+                username: "username02",
+                email: "newEmail",
+                firstName: "newFirstName",
+                lastName: "newLastName"
+            })
+            
+            expect(response.statusCode).toBe(409)
+        })
+        
+        test('should return 400 if catalogueId does not exist', async () => {
+            let response
+
+            response = await request(app)
+            .patch('/users')
+            .set('Authorization', `Bearer ${token}`)
+            .send({
+                userId: "100000000000000000000000",
+                username: "username01",
+                email: "newEmail",
+                firstName: "newFirstName",
+                lastName: "newLastName",
+                addCatalogues: "999999000000000000000000"
+            })
+            expect(response.statusCode).toBe(400)
+        })
+
+        test('should return 400 if catalogueId is not a proper objId', async () => {
+            let response
+
+            response = await request(app)
+            .patch('/users')
+            .set('Authorization', `Bearer ${token}`)
+            .send({
+                userId: "100000000000000000000000",
+                username: "username01",
+                email: "newEmail",
+                firstName: "newFirstName",
+                lastName: "newLastName",
+                addCatalogues: "999999"
+            })
+            expect(response.statusCode).toBe(400)
+
+            response = await request(app)
+            .patch('/users')
+            .set('Authorization', `Bearer ${token}`)
+            .send({
+                userId: "100000000000000000000000",
+                username: "username01",
+                email: "newEmail",
+                firstName: "newFirstName",
+                lastName: "newLastName",
+                delCatalogues: "999999"
+            })
+            expect(response.statusCode).toBe(400)
+        })
+    })
+
+
+    describe("DELETE /users", () => {
+
+        // Create a valid token with a test secret and payload
+        const testUsername = "username01"
+        const token = jwt.sign(
+            { username: testUsername },
+            process.env.ACCESS_TOKEN_KEY, 
+            { expiresIn: '30s' }
+        )
+
+        test('should return success 204', async () => {            
+            const response = await request(app)
+            .delete('/users')
+            .set('Authorization', `Bearer ${token}`)
+            .send({
+                userId: "100000000000000000000000"
+            })
+            expect(response.statusCode).toBe(204)
+        })
+
+        test('should return error 400 if userId is not given', async () => {            
+            const response = await request(app)
+            .delete('/users')
+            .set('Authorization', `Bearer ${token}`)
+            .send()
+            expect(response.statusCode).toBe(400)
+        })
+
+        test('should return error 400 if username does not match token', async () => {            
+            const response = await request(app)
+            .delete('/users')
+            .set('Authorization', `Bearer ${token}`)
+            .send({
+                userId: "200000000000000000000000"
+            })
+            expect(response.statusCode).toBe(400)
+        })
+    })
 })

@@ -1,17 +1,31 @@
 # MongoDB Database Documentation
 
-## Overview
+---
 
-This document provides an overview of the different objects (collections and documents) stored in the MongoDB database for the project. Each collection contains various documents that represent different entities within the project.
+## Preface
 
+#### Introduction
 
-## Clusters
+This is documentation for all information regarding the Indigenous Database's storage structure, storage components, and API functionalities. The preface contains background information needed to understand the documentation, while the following sections describe the specifications and details of the database structure and API. 
+
+#### MongoDB Document Based Storage
+
+The database used is primarily MongoDB, meaning it relies on document-based storage. Each type of document is an entry in the database and is structured by it's *schema*, a set of fields that describe what data a document can hold. Schemas are unique, and multiple documents often follow the same schema. Documents are grouped into *collections*, and while documents of differing schemas can belong to the same collection, this is not used to preserve predictability. Collections are used to query and update documents. Multiple collections are stored in a MongoDB *database*, and multiple databases belong to a *cluster*.
+
+#### AWS Bucket Cloud Storage
+
+This is used in this project for storing images, primarily book covers.
+
+---
+## Database Structure
+
+### Clusters
 
 #### 1. **Cluster0**
 
 This is the first and only cluster made for the project. I will transfer it to another name eventually but for now this is the only cluster being used. This is the most cost effective solution for the project because there is only one free teir cluster allowed per person .
 
-## Databases
+### Databases
 
 #### 1. **test**
 
@@ -25,12 +39,9 @@ This is the deployment database. It will be in use once deployment occurs.
 
 This is the new dev database. It will hold all future development data from after the schema changes.
 
-#### 3. **TestDB**
+---
 
-This is the test database. It holds all data used during testing of the API.
-
-
-## Collections
+# Collections
 
 #### 1. **Users Collection**
    - **Description:** 
@@ -94,7 +105,7 @@ This is the test database. It holds all data used during testing of the API.
 
 #### 4. **Groups Collection**
 **
-   IMPORTANT INFO 
+   IMPORTANT NOTICE 
       
    GROUPS ARE CURRENTLY NOT PART OF THE GOAL, WILL BE PUT ON THE BACK BURNER UNTIL THE WEBSITE HAS FULL SEARCH / SHARING CAPABILITIES
 **
@@ -118,9 +129,9 @@ This is the test database. It holds all data used during testing of the API.
    
 ---
 
-# Controller Function Documentation
+# Controller Functions
 
-This document provides a summary of key functions in the application, including information on input parameters, outputs, errors, and any authorization requirements.
+This document provides a summary of the key functions in the REST API. It including information on input parameters, outputs, errors, and any authorization requirements.
 
 ## Users Controller
 

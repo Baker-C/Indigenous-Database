@@ -31,6 +31,8 @@ const userFixtures = [
             "avatar": "avatar02",
         },
         "catalogues": [
+            ObjId("700000000000000000000000"),
+            ObjId("800000000000000000000000")
         ],
         "groups": [],
         "created": null
@@ -86,9 +88,31 @@ const bookFixtures = [
 const catalogueFixtures = [
     {
         "_id": ObjId("600000000000000000000000"),
-        "name": "name01",
-        "description": "description01",
+        "name": "name",
+        "description": "description",
         "owner": ObjId("100000000000000000000000"),
+        "entries": [
+        ],
+        "created": null,
+        "updated": null,
+        "color": "#2E8B57"
+    },
+    {
+        "_id": ObjId("700000000000000000000000"),
+        "name": "name",
+        "description": "description",
+        "owner": ObjId("200000000000000000000000"),
+        "entries": [
+        ],
+        "created": null,
+        "updated": null,
+        "color": "#2E8B57"
+    },
+    {
+        "_id": ObjId("800000000000000000000000"),
+        "name": "name",
+        "description": "description",
+        "owner": ObjId("200000000000000000000000"),
         "entries": [
         ],
         "created": null,

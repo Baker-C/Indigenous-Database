@@ -14,49 +14,54 @@ const savedName = 'My Saved'
 // @route GET /catalogues
 // @access Private
 const get = async (req, res) => {
-    const { id, userId } = req.body
+    const { ids } = req.body
 
     // check for provided info
-    if (!(id || userId)) {
-        return res.status(400).json({ message: 'Must provide either catalogue id or user id.' })
+    if (!(ids)) {
+        return res
+        .status(400)
+        .json({ 
+            message: 'Must provide either catalogue id or list of catalogue ids.'
+        })
     }
+
+    // Converts single arguments into array if not already
+    const listIds = Array.isArray(ids) ? ids : (ids ? [ids] : [])
     
-    // Return specific catalogue if catalogue id provided
-    if (id) {
-        // checks if catalogue exists
-        const catalogue = await Catalogue
-        .findById(id)
-        .populate('entries')
-        .lean()
-        .exec()
-
-        if (!catalogue) {
-            return res.status(400).json({ message: 'Catalogue not found' })
-        } 
-
-        return res.status(200).json({ ...catalogue })
+    // get object ids
+    let catalogueObjIds
+    try {
+        catalogueObjIds = listIds.map(entry => 
+            ObjId(entry)
+        )
+    } catch (err) {
+        return res
+        .status(400)
+        .json({ 
+            message: 'Catalogues contains a non-ObjId.' 
+        })
     }
 
-    // Return all catalogues of a user if user ID is specified
-    // check if user exists
-    const user = await User
-    .findById(userId)
-    .select('catalogues')
-    .populate({ 
-        path: 'catalogues', 
-        populate: { 
-            path: 'entries' 
-        }
+    // checks if catalogues exist
+    const catalogue = await Catalogue
+    .find({
+        _id: { $in : catalogueObjIds }
     })
+    .populate('entries')
     .lean()
     .exec()
 
-    if (!user) {
-        return res.status(400).json({ message: `User ${userId} not found` })
-    }
+    if (!catalogue) {
+        return res
+        .status(400)
+        .json({ 
+            message: 'Catalogue not found' 
+        })
+    } 
 
-    return res.status(200).json({ ...user.catalogues })
-
+    return res
+    .status(200)
+    .json({ ...catalogue })
 }
 
 
@@ -79,7 +84,7 @@ const create = async (req, res) => {
     // Check that owner exists
     const owner = await User
     .findById(ownerId)
-     .exec()
+    .exec()
 
     if (!owner) {
         return res
@@ -92,23 +97,26 @@ const create = async (req, res) => {
     let entriesObjIds = []
    
     // Check that entries exist
-    if (entries) {
-        // check that entries are in an array format
-        if (!entries?.isArray()) {
+    if (entries?.length) {
+        // Converts single arguments into array if not already
+        const listEntries = Array.isArray(entries) ? entries : (entries ? [entries] : [])
+        
+        let entriesObjIds
+        try {
+            entriesObjIds = listEntries.map(entry => 
+                ObjId(entry)
+            )
+        } catch (err) {
             return res
             .status(400)
             .json({ 
-                message: 'Entries must be in an array format (e.g. [ entry 01, ... ])' 
+                message: 'Entries contains a non-ObjId.' 
             })
         }
-        
-        entriesObjIds = entries.map(entry =>  ObjId(entry))
 
         const checkedEntries = await Book
         .find({ 
-            _id: { 
-                $in: entriesObjIds 
-            } 
+            _id: { $in: entriesObjIds } 
         })
         .lean()
         .exec()
@@ -122,18 +130,13 @@ const create = async (req, res) => {
         }
     }
 
-    let initialName
     // set initial name
-    if (!name) {
-        initialName = `Untitiled ${owner?.catalogues.length + 1}`
-    } else {
-        initialName = name
-    }
+    initialName = initialName ? initialName : `Untitiled ${owner?.catalogues.length + 1}`
 
     // create catalogue
     const catalogueObj = { 
         'name': initialName, 
-        'owner': ownerId,
+        'owner': ObjId(ownerId),
         'entries': entriesObjIds 
     }
     const catalogue = await Catalogue
@@ -151,13 +154,12 @@ const create = async (req, res) => {
 
     // update user's catalogue list
     const updatedUser = await User
-    .updateOne({ 
-        _id: ownerId
-    },
+    .updateOne(
+    {
+        _id: ownerId 
+    }, 
     { 
-        $push: { 
-            catalogues: catalogue._id 
-        }
+        $push: { catalogues: catalogue._id }
     })
 
     if (!updatedUser) {
@@ -220,11 +222,23 @@ const update = async (req, res) => {
     
     // check and add new entries
     if (addEntries) {
+        // Converts single arguments into array if not already
+        const listEntries = Array.isArray(addEntries) ? addEntries : (addEntries ? [addEntries] : [])
 
         // get object ids
-        const addObjIds = addEntries.map(entry => 
-            ObjId(entry)
-        )
+        let addObjIds
+        try {
+            addObjIds = listEntries.map(entry => 
+                ObjId(entry)
+            )
+        } catch (err) {
+            console.log(err)
+            return res
+            .status(400)
+            .json({ 
+                message: 'Add entries contains a non-ObjId.' 
+            })
+        }
 
         // filter out the ids that are already in the list
         const filteredObjIds = addObjIds.filter(addObjId => 
@@ -250,16 +264,28 @@ const update = async (req, res) => {
         }
 
         // If entries are left, add them
-        if (filteredObjIds?.length) {
+        if (checkedEntries?.length) {
             catalogue.entries = [ ...catalogue.entries, ...filteredObjIds ]
         }
     }
 
     // check and delete given entries
     if (delEntries) {
+        // Converts single arguments into array if not already
+        const listEntries = Array.isArray(delEntries) ? delEntries : (delEntries ? [delEntries] : [])
 
         // get object ids
-        const delObjIds = delEntries.map(entry => ObjId(entry))
+        let delObjIds
+        try {
+            delObjIds = listEntries.map(entry => ObjId(entry))
+        } catch (err) {
+            console.log(err)
+            return res
+            .status(400)
+            .json({ 
+                message: 'Del entries contains a non-ObjId.' 
+            })
+        }
 
          // filter out the ids that are not in the list
          const filteredObjIds = delObjIds.filter(delObjId => 
@@ -295,12 +321,11 @@ const update = async (req, res) => {
     catalogue.lastUpdated = Date.now()
 
     // update catalogue
-    const updatedCatalogue = await catalogue.save()
+    await catalogue.save()
 
     return res
-    .json({ 
-        message: `${updatedCatalogue.title} updated`
-    })
+    .status(204)
+    .end()
 }
 
 
@@ -350,7 +375,9 @@ const remove = async (req, res) => {
     if (updatedUsers.modifiedCount === 0) {
         return res
         .status(400)
-        .json({ message: 'Catalogues of users not updated with delete' })
+        .json({
+             message: 'Catalogues of users not updated with delete' 
+        })
     }
 
     // delete catalogue
@@ -367,10 +394,9 @@ const remove = async (req, res) => {
         })
     }
 
-    return res.status(200)
-    .json({
-        message: `${deletedCatalogue.title} deleted`
-    })
+    return res
+    .status(204)
+    .end()
 }
 
 
