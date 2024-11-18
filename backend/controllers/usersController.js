@@ -1,37 +1,52 @@
 const User = require('../schemas/User')
-const Group = require('../schemas/Group')
 const Catalogue = require('../schemas/Catalogue')
+const { userSavedCatalogue } = require('../schemas/Catalogue')
+const Util = require('./util')
 const bcrypt = require('bcrypt')
 const mongoose = require('mongoose')
-const ObjId = mongoose.Types.ObjectId
+const ObjId = mongoose.Types.ObjectId.createFromHexString
 
 
 // @desc Get a single user
 // @route GET /users
-// @access Private
+// @access Public
 const get = async (req, res) => {
-    const { username } = req.body
+    const { username, userId } = req.body
 
-    // returns all users if no username specified
-    if (!username) {
-        const users = await User.find().select('-password').populate('catalogues').lean().exec()
-        if (users?.length) {
-            return res.json(users)
-        } else {
-            return res.status(400).json({ message: 'No users found' })
-        }
+    if (!username && !userId ) {
+        return res.status(400).json({ 
+            message: 'User ID or username required.' 
+        })
     }
 
-    if (!username || !password ) {
-        return res.status(400).json({ message: 'A password is required if username is provided' })
+    const usernames = Util.toArray(username)
+    const userIds = Util.toArray(userId)
+
+    if (Util.invalidObjId(userIds)) {
+        return res.status(400).json({ 
+            message: 'Invalid User ID.' 
+        })
     }
 
-    const user = await User.find().populate('catalogues').lean().exec()
-    if (!user) {
-        return res.status(400).json({ message: 'User not found' })
+    const users = await User
+    .find({
+        $or: [
+            { username: { $in : usernames } },
+            { _id: { $in : userIds } }
+        ]
+    })
+    .populate('catalogues')
+    .select('-email -password')
+    .lean()
+    .exec()
+
+    if (!users?.length) {
+        return res.status(400).json({ 
+            message: 'Users not found.'
+        })
     }
 
-    res.json(user)
+    return res.status(200).json(users)
 }
 
 
@@ -39,56 +54,87 @@ const get = async (req, res) => {
 // @route POST /users
 // @access Private
 const create = async (req, res) => {
-    const { username, email, password, rePassword } = req.body
+    Util.trimWhitespace(req.body)
 
-    // Confirm data
-    if ( !username || !email || !password || !rePassword ) {
-        return res.status(400).json({ message: 'A username, email, and password rePassword are required' })
+    const { username, email, password, rePassword, firstName, lastName } = req.body
+
+    if ( !username || !email || !password || !rePassword || !firstName || !lastName ) {
+        return res.status(400).json({ 
+            message: 'A firstName, lastName, username, email, and password rePassword are required.' 
+        })
     }
 
-    // Check that passwords match
-    if (!(password === rePassword)) {
-        return res.status(400).json({ message: 'The password and re-password need to match' })
+    if (Util.usernameOverMaxLength(username)) {
+        return res.status(400).json({
+            message: 'Username is too long'
+        })
     }
 
-    // Check for duplicates
-    const duplicate = await User.findOne({ username }).lean().exec()
+    if (password !== rePassword) {
+        return res.status(400).json({
+            message: 'The password and rePassword need to match.' 
+        })
+    }
+    
+
+    const duplicate = await User
+    .findOne({ username: username })
+    .countDocuments()
+    
+
     if (duplicate) {
-        return res.status(409).json({ message: 'Duplicate username found' })
+        return res.status(409).json({ 
+            message: 'Duplicate username found.' 
+        })
     }
+    
 
     // User object with hashed pass
     const hashedPwd = await bcrypt.hash(password, 10) // Salt rounds = 10
-    const userObj = { 
+    const userObj = {
         username, 
         email, 
-        "password": hashedPwd 
+        "password": hashedPwd,
+        "profile" : {
+            firstName,
+            lastName
+        }
     }
 
     const user = await User.create(userObj)
 
-    // Check for created
     if (!user) {
-        res.status(400).json({ message: 'Error creating user: Invalid user data recieved' }) 
+        res.status(400).json({ 
+            message: 'Error creating user.' 
+        }) 
     }
-
+    
     // Create Saved Books catalogue
-    const yourBooksObj = {
-        "title": "Saved Books",
-        "privacy": "PRIVATE",
-        "owner": user._id,
-        "date": new Date()
-    }
-    const yourBooks = await Catalogue.create(yourBooksObj)
-    if (!yourBooks) {
-        await User.findByIdAndDelete(user._id).lean().exec()
-        return res.status(400).json({ message: 'Error creating Saved Books for new user' })
-    } else {
-        user.catalogues = [ yourBooks._id ]
-        await user.save()
-    }
+    const savedObj = {
+        "name": `${userSavedCatalogue}`,
+        "description": "All of your saved entries",
+        "owner": user._id
+    }    
 
-    res.status(201).json({ message: `New user ${username} created` })
+    const savedCatalogue = await Catalogue
+    .create(savedObj)
+
+    if (!savedCatalogue) {
+        await User
+        .findByIdAndDelete(user._id)
+        .lean()
+        .exec()
+
+        return res.status(400).json({ 
+            message: `Error creating ${userSavedCatalogue} for new user` 
+        })
+    } else {
+        user.catalogues = [ savedCatalogue._id ]
+        
+        await user.save()
+
+        return res.status(201).json( user )
+    }
 }
 
 
@@ -96,105 +142,191 @@ const create = async (req, res) => {
 // @route PATCH /users
 // @access Private
 const update = async (req, res) => {
-    const { username, newUsername, email, catalogueId, friendId, groupId } = req.body
+    Util.trimWhitespace(req.body)
+    
+    const { userId, username, email, firstName, lastName, addCatalogues, delCatalogues } = req.body
 
-    // Confirm data
-    if ( !username ) {
-        return res.status(400).json({ message: 'A username, password, newUsername, newEmail, and newPassword are required' })
+    // confirm data
+    if ( !userId | Util.invalidObjId(userId) ) {
+        return res.status(400).json({ 
+            message: 'A Valid User Id is required for udates.' 
+        })
     }
 
-    const user = await User.findOne({ username }).exec()
+    if (username && Util.usernameOverMaxLength(username)) {
+        return res.status(400).json({
+            message: 'Username too long'
+        })
+    }
+    
+    // check if user exists
+    const user = await User
+    .findById(userId)
+    .exec()
+
     if (!user) {
-        return res.status(400).json({ message: 'User not found'})
+        return res.status(400).json({ 
+            message: 'User not found'
+        })
     }
 
-    // Check for duplicate
-    const duplicate = await User.findOne({ newUsername }).lean().exec()
-    // Allow updates to the original user
-    if (duplicate && duplicate?.username?.toString() === newUsername) {
-        return res.status(409).json({ message: 'Duplicate username' })
+    // Confirm user token belongs to user being changed
+    if (req.user !== user.username) {
+        return res.status(401).json({
+            message: 'User token does not match.'
+        })
     }
 
-    if (newUsername) user.username = newUsername
+    const duplicate = await User
+    .findOne({ username: username })
+    .countDocuments()
+
+    if (duplicate && (user.username !== username)) {
+        return res.status(409).json({ 
+            message: 'Duplicate username found.' 
+        })
+    }
+
+    // set new info if given
+    if (username) user.username = username
+
     if (email) user.email = email
-    if (catalogueId) {
-        const catalogue = await Catalogue.findById(catalogueId).lean().exec()
-        if (!catalogue) {
-            return res.status(400).json({ message: 'Catalogue not found'})
+
+    if (firstName) user.profile.firstName = firstName
+
+    if (lastName) user.profile.lastName = lastName
+     
+    if (addCatalogues) {
+        // Converts single arguments into array if not already
+        const listCatalogues = Util.toArray(addCatalogues)
+
+        
+        if (Util.invalidObjId(listCatalogues)) {
+            return res.status(400).json({ 
+                message: 'Add catalogues contains a non-ObjId.' 
+            })
         }
-        const catalogueObjId = new ObjId(catalogueId)
-        user.catalogues = { ...user.catalogues, catalogueObjId }
+
+        const objIds = listCatalogues.map(entry => ObjId(entry))
+
+        // filter out the ids that are already in the list
+        const filteredObjIds = objIds.filter(objId => !user.catalogues?.includes(objId))
+        
+        // check that the catalogues exist
+        const checkedCatalogues = await Catalogue
+        .find({
+            _id: { $in : filteredObjIds }
+        })
+        .lean()
+        .exec()
+
+        if (filteredObjIds?.length !== checkedCatalogues?.length) {
+            return res
+            .status(400)
+            .json({ 
+                message: `Entry(s) not found` 
+            })
+        }
+
+        // If entries are left, add them
+        if (filteredObjIds?.length) {
+            user.catalogues = [ ...user.catalogues, ...filteredObjIds ]
+        }
     }
-    if (groupId) {
-        const group = await Group.findById(groupId).lean().exec()
-        if (!group) {
-            return res.status(400).json({ message: 'Group not found'})
-        }        
-        const groupObjId = new ObjId(groupId)
-        if (user.groups?.includes(groupId)) {
-            user.groups = user.groups?.filter(f => f !== groupObjId)
-        } else {
-            user.groups = { ...user.groups, groupObjId }
+
+    if (delCatalogues) {
+        // Converts single arguments into array if not already
+        const listCatalogues = Util.toArray(delCatalogues)
+
+        if (Util.invalidObjId(listCatalogues)) {
+            return res.status(400).json({ 
+                message: 'Add catalogues contains a non-ObjId.' 
+            })
         }
+
+        const objIds = listCatalogues.map(entry => ObjId(entry))
+        
+        // if any are matching, delete them
+        user.catalogues = user.catalogues?.filter(objId => !objIds?.includes(objId))
     }
 
     // Confirm update
-    const updatedUser = await user.save()
+    await user.save()
 
-    res.json({ message: `${updatedUser.username} updated`})
+    res.status(204).end()
 }
+
+
 
 // @desc Delete user
 // @route DELETE /users
 // @access Private
 const remove = async (req, res) => {
-    const { username, id } = req.body
+    const { userId } = req.body
 
-    if (!username && !id) {
-        return res.status(400).json({ message: 'Username or id is required'})
+    // confirm data
+    if (!userId | Util.invalidObjId(userId)) {
+        return res.status(400).json({ 
+            message: 'A valid User Id is required.'
+        })
     }
 
-    let user
-
-    // Check for user
-    if (username) {
-        user = await User.findOne({ username: username }).lean().exec()
-    } else {
-        user = await User.findById(id).lean().exec()
-    }
+    const user = await User
+    .findById(userId)
+    .populate({ 
+        path: 'catalogues',
+        select: 'owner'
+    })
+    .select('catalogues username')
+    .exec()
 
     if (!user) {
-        return res.status(400).json({ message: 'User not found' })
+        return res
+        .status(400)
+        .json({ 
+            message: 'User not found.' 
+        })
     }
 
-    // Delete from all other user's catalogue lists
-    for (let catalogueId of user.catalogues) {
-        const updatedUsers = await User.updateMany({}, { $pull: { catalogues: new ObjId(catalogueId) }})
-        if (!updatedUsers) {
-            return res.status(400).json({ message: `Catalogues of other users not updated with delete: ${catalogueId}` })
+    // Check that username matches token
+    if (user.username !== req.user) {
+        return res
+        .status(400)
+        .json({ 
+            message: 'User does not match token.' 
+        })
+    }
+
+    // Delete user owned catalogues
+    for (let catalogue of user.catalogues) {
+        if (catalogue.owner === user._id) {
+            await User
+            .updateMany({}, { 
+                $pull: { 
+                    catalogues: ObjId(catalogue._id) 
+                }
+            })   
+            
+            await Catalogue
+            .findByIdAndRemove(catalogue._id)
+            .lean()
+            .exec()   
         }
-        deletedCatalogue = await Catalogue.findByIdAndRemove(catalogueId).lean().exec()
-        if (!updatedUsers) {
-            return res.status(400).json({ message: `Unable to delete catalogue: ${catalogueId}` })
-        }
     }
 
-    const updatedUsers = await Group.updateMany({}, { $pull: { members: new ObjId(id) }})
-    if (!updatedUsers) {
-        return res.status(400).json({ message: `Groups not updated with delete` })
-    }
+    // delete user
+    const deletedUser = await User
+    .findByIdAndDelete(userId)
+    .lean()
+    .exec()
 
-    let deletedUser
-    if (id) {
-        deletedUser = await User.findByIdAndRemove(id).lean().exec()
-    } else if (username) {
-        deletedUser = await User.findOneAndRemove({ "username": username }).lean().exec()
-    }
     if (!deletedUser) {
-        return res.status(400).json({ message: 'Failed to delete user' })
+        return res.status(400).json({ 
+            message: 'Failed to delete user.' 
+        })
     }
 
-    res.json({ message: `User ${deletedUser.username} deleted` })
+    res.status(204).end()
 }
 
 module.exports = {

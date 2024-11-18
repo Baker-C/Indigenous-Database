@@ -1,6 +1,8 @@
 const mongoose = require('mongoose')
 const { Schema } = mongoose;
 
+module.exports.userSavedCatalogue = "My Saved"
+
 const catalogueSchema = new Schema({
     name: {
         type: String,
@@ -30,10 +32,18 @@ const catalogueSchema = new Schema({
     color: {
         type: String,
         required: true,
-        default: 'LightSteelBlue',
-        enum: ['LightSteelBlue', 'DodgerBlue', 'SteelBlue', 'LightSalmon', 
-            'LightPink', 'Violet', 'SeaGreen', 'MediumSpringGreen']
+        default: '#B0C4DE', // LightSteelBlue
+        enum: [
+            '#B0C4DE', // LightSteelBlue
+            '#1E90FF', // DodgerBlue
+            '#4682B4', // SteelBlue
+            '#FFA07A', // LightSalmon
+            '#FFB6C1', // LightPink
+            '#EE82EE', // Violet
+            '#2E8B57', // SeaGreen
+            '#00FA9A'  // MediumSpringGreen
+        ]
     }
 })
 
-module.exports = mongoose.model('Catalogue', catalogueSchema) 
+module.exports = mongoose.model('Catalogue', catalogueSchema)

@@ -7,43 +7,31 @@ const ObjId = mongoose.Types.ObjectId
 // @route GET /groups
 // @access Private
 const get = async (req, res) => {
-    const { id, title, userId } = req.query
+    const { id } = req.query
 
-    if (id && id !== 'undefined') {
-        // Checks if group exists
-        const group = await Group.findById(id).populate('members').lean().exec()
-        if (!group) {
-            return res.status(400).json({ message: 'Group not found' })
-        } 
-    }
-    
-    if (title && title !== 'undefined') {
-        // Checks if group exists
-        const group = await Group.findOne({ title: title }).populate('members').lean().exec()
-        if (!group) {
-            return res.status(400).json({ message: 'Group not found' })
-        } 
+    // Check for input info
+    if (!id) {
+        return res.status(400).json({ message: 'An id is required'})
     }
 
-    if (userId && userId !== 'undefined') {
-        // Checks if user exists
-        const user = await User.findById(userId)
-            .populate({ path: 'groups',
-                populate: {
-                    path: 'members'
-                }
-             }).lean().exec()
-        if (!user) {
-            return res.status(400).json({ message: 'Group not found' })
-        }
-        return res.json(user.groups)
+    // Checks if group exists
+    const group = await Group
+    .findById({id})
+    .populate({
+       path: 'admins',
+       select: '-password'
+    })
+    .populate({ 
+        path: 'members',
+        select: '-password'
+     })
+    .lean()
+    .exec()
+    if (!group) {
+        return res.status(400).json({ message: 'Group not found' })
     }
 
-    const groups = await Group.find().populate({ path: 'members', select: '-password' }).lean().exec()
-    if (!groups.length) {
-        return res.status(400).json({ message: 'Groups not found' })
-    }
-    return res.json(groups)
+    return res.json(group)
 }
 
 
@@ -52,46 +40,69 @@ const get = async (req, res) => {
 // @route POST /groups
 // @access Private
 const create = async (req, res) => {
-    const { title, userId } = req.body
+    const { adminId, name, desecription } = req.body
 
     // Confirm data
-    if ( !title || !userId ) {
-        return res.status(400).json({ message: 'A title and userId is required' })
+    if ( !name || !adminId ) {
+        return res.status(400).json({ message: 'A name and adminId are required' })
     }
 
     // Check that owner exists
-    const user = await User.findById(userId).exec()
+    const user = await User
+    .findById(adminId)
+    .exec()
     if (!user) {
         return res.status(400).json({ message: 'User not found' })
     }
 
     // Check for duplicates
-    const duplicate = await Group.findOne({ 'title': title }).lean().exec()
+    const duplicate = await Group
+    .findOne({ 'name': name })
+    .lean()
+    .exec()
     if (duplicate) {
-        return res.status(409).json({ message: `Duplicate title found ${title}` })
+        return res.status(409).json({ message: `Duplicate name found ${name}` })
     }
 
     const groupObj = { 
-        'title': title, 
-        'members': [new ObjId(userId)]
+        'name': name, 
+        'members': {
+            'admins': [new ObjId(adminId)]
+        }
     }
-    const group = await Group.create({ ...groupObj })
 
-    const updatedUsers = await User.updateMany(
-        { _id: userId },
-        { $push: { groups: group._id } }
+    if (description) groupObj.description = description
+
+    // Create group
+    const group = await Group
+    .create({ 
+        ...groupObj 
+    })
+    if (!group) {
+        return res.status(400).json({ message: 'Error creating group: Invalid group data recieved' })
+    }
+
+    // add to admin's group list
+    const updatedUser = await User
+    .update(
+        { 
+            _id: adminId
+        },
+        { 
+            $push: { 
+                groups: group._id 
+            } 
+        }
     )
-    if (!updatedUsers) {
+    
+    if (!updatedUser) {
         return res.status(400).json({ message: 'Error updating user group list' })
     }
-
-    // Check for created
-    if (group) {
-        res.status(201).json({ message: `New group title: ${title} id: ${group._id} created` })
-    } else {
-        res.status(400).json({ message: 'Error creating group: Invalid group data recieved' })
-    }
+    
+    return res.status(201).json({ message: `New group title: ${name} id: ${group._id} created` })
 }
+
+
 
 // @desc Update group
 // @route PATCH /groups
