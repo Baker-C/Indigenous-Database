@@ -14,31 +14,32 @@ const Catalogue = require('../schemas/Catalogue.js')
 
 describe('Users API', () => {
     beforeAll(async () => {
-        try {
-            await User
-            .deleteMany({ })
-            .catch((err) => {
-                console.error("Error deleting users:", err)
-            })
+        await User
+        .deleteMany({ })
+        .catch((err) => {
+            console.error("Error deleting users:", err)
+        })
+        await Book
+        .deleteMany({ })
+        .catch((err) => {
+            console.error("Error deleting books:", err)
+        })
 
-            await User
-            .insertMany(userFixtures)
-            .catch((err) => {
-                console.error("Error insertings users:", err)
-            })
-            await Book
-            .insertMany(bookFixtures)
-            .catch((err) => {
-                console.error("Error insertings books:", err)
-            })
-            await Catalogue
-            .insertMany(catalogueFixtures)
-            .catch((err) => {
-                console.error("Error insertings catalogues:", err)
-            })
-        } catch (err) {
-            console.error("Error initializing data:", err)
-        }
+        await User
+        .insertMany(userFixtures)
+        .catch((err) => {
+            console.error("Error insertings users:", err)
+        })
+        await Book
+        .insertMany(bookFixtures)
+        .catch((err) => {
+            console.error("Error insertings books:", err)
+        })
+        await Catalogue
+        .insertMany(catalogueFixtures)
+        .catch((err) => {
+            console.error("Error insertings catalogues:", err)
+        })
     })
 
     afterAll(async () => {
@@ -100,7 +101,6 @@ describe('Users API', () => {
                 userId: "100000000000000000000000",
                 username: "username02"
             })
-            console.log(response.body)
             expect(response.statusCode).toBe(200)
             expect(response.body.length).toBe(2)
             expect(response.body[0]).toHaveProperty('username', 'username01')
@@ -141,99 +141,104 @@ describe('Users API', () => {
 
     
     describe("CREATE /users", () => {
+        const body = {
+            username: "newUser99",
+            email: "newEmail",
+            password: "newPassword",
+            rePassword: "newPassword",
+            firstName: "newFirstName",
+            lastName: "newLastName"
+        }
+        const { username, ...noUsername } = body
+        const { email, ...noEmail } = body
+        const { password, ...noPassword } = body
+        const { rePassword, ...noRePassword } = body
+        const { firstName, ...noFirstName } = body
+        const { lastName, ...noLastName } = body
 
         test('should return success 201 from username, email, password, rePassword, firstName, lastName', async () => {
             const response = await request(app)
             .post('/users')
-            .send({
-                username: "newUser",
-                email: "newEmail",
-                password: "newPassword",
-                rePassword: "newPassword",
-                firstName: "newFirstName",
-                lastName: "newLastName"
-            })
+            .send(body)
             expect(response.statusCode).toBe(201)
         })
 
-        test('should return error 400 if username, email, password, rePassword, firstName, or lastName is missing', async () => {
-            const body = {
-                username: "newUser",
-                email: "newEmail",
-                password: "newPassword",
-                rePassword: "newPassword",
-                firstName: "newFirstName",
-                lastName: "newLastName"
-            }
-            const { username, ...noUsername } = body
-            const { email, ...noEmail } = body
-            const { password, ...noPassword } = body
-            const { rePassword, ...noRePassword } = body
-            const { firstName, ...noFirstName } = body
-            const { lastName, ...noLastName } = body
+        test('should return error 400 if username too long', async () => {
+            const usernameTooLong = body
+            usernameTooLong.username = 'ThisUsernameIsTooLong'
 
-            let response
+            const response = await request(app)
+            .post('/users')
+            .send(usernameTooLong)
+            expect(response.statusCode).toBe(400)
+        })
 
-            response = await request(app)
+        test('should return error 400 if username is missing', async () => {
+            const response = await request(app)
             .post('/users')
             .send(noUsername)
             expect(response.statusCode).toBe(400)
+        })
 
-            response = await request(app)
+        test('should return error 400 if email is missing', async () => {
+            const response = await request(app)
             .post('/users')
             .send(noEmail)
             expect(response.statusCode).toBe(400)
+        })
 
-            response = await request(app)
+        test('should return error 400 if password is missing', async () => {
+            const response = await request(app)
             .post('/users')
             .send(noPassword)
             expect(response.statusCode).toBe(400)
+        })
 
-            response = await request(app)
+        test('should return error 400 if rePassword is missing', async () => {
+            const response = await request(app)
             .post('/users')
             .send(noRePassword)
             expect(response.statusCode).toBe(400)
+        })
 
-            response = await request(app)
+        test('should return error 400 if firstName is missing', async () => {
+            const response = await request(app)
             .post('/users')
             .send(noFirstName)
             expect(response.statusCode).toBe(400)
+        })
 
-            response = await request(app)
+        test('should return error 400 if lastName is missing', async () => {
+            const response = await request(app)
             .post('/users')
             .send(noLastName)
             expect(response.statusCode).toBe(400)
         })
         
         test('should return error 400 if password and rePassword do not match', async () => {
-            const body = {
-                username: "newUser",
-                email: "newEmail",
-                password: "newPassword",
-                rePassword: "differentPassword",
-                firstName: "newFirstName",
-                lastName: "newLastName"
-            }
+            const OGPassword = body.rePassword
+
+            body.rePassword = "notMatchingPassword"
             response = await request(app)
             .post('/users')
             .send(body)
             expect(response.statusCode).toBe(400)
+
+            body.rePassword = OGPassword
         })
 
+        
+
         test('should return error 409 if a duplicate username is found', async () => {
-            const body = {
-                username: "username01",
-                email: "newEmail",
-                password: "newPassword",
-                rePassword: "newPassword",
-                firstName: "newFirstName",
-                lastName: "newLastName"
-            }
+            body.username = "username01"
             response = await request(app)
             .post('/users')
             .send(body)
+
             expect(response.statusCode).toBe(409)
         })
+
+
     })
 
 
@@ -248,10 +253,8 @@ describe('Users API', () => {
             { expiresIn: '30s' }
         )
 
-        test('should return success 204', async () => {
-            let response
-            
-            response = await request(app)
+        test('should return success 204', async () => {            
+            const response = await request(app)
             .patch('/users')
             .set('Authorization', `Bearer ${token}`)
             .send({
@@ -262,8 +265,10 @@ describe('Users API', () => {
                 lastName: "newLastName"
             })
             expect(response.statusCode).toBe(204)
+        })
 
-            response = await request(app)
+        test('should return success 204', async () => {
+            const response = await request(app)        
             .patch('/users')
             .set('Authorization', `Bearer ${token}`)
             .send({
@@ -274,9 +279,12 @@ describe('Users API', () => {
                 lastName: "newLastName",
                 addCatalogues: "700000000000000000000000"
             })
-            expect(response.statusCode).toBe(204)
 
-            response = await request(app)
+            expect(response.statusCode).toBe(204)
+        })
+
+        test('should return success 204', async () => {
+            const response = await request(app)
             .patch('/users')
             .set('Authorization', `Bearer ${token}`)
             .send({
@@ -288,8 +296,10 @@ describe('Users API', () => {
                 addCatalogues: ["700000000000000000000000"]
             })
             expect(response.statusCode).toBe(204)
+        })
 
-            response = await request(app)
+        test('should return success 204', async () => {
+            const response = await request(app)
             .patch('/users')
             .set('Authorization', `Bearer ${token}`)
             .send({
@@ -301,8 +311,10 @@ describe('Users API', () => {
                 delCatalogues: "600000000000000000000000"
             })
             expect(response.statusCode).toBe(204)
+        })
 
-            response = await request(app)
+        test('should return success 204', async () => {
+            const response = await request(app)
             .patch('/users')
             .set('Authorization', `Bearer ${token}`)
             .send({
@@ -314,6 +326,18 @@ describe('Users API', () => {
                 delCatalogues: ["600000000000000000000000"]
             })
             expect(response.statusCode).toBe(204)
+        })
+
+        test('should return error 400 if username too long', async () => {
+            const usernameTooLong = {
+                userId: "100000000000000000000000",
+                username: 'ThisUsernameIsTooLong'
+            }
+
+            const response = await request(app)
+            .post('/users')
+            .send(usernameTooLong)
+            expect(response.statusCode).toBe(400)
         })
 
         test('should return error 400 from no userId provided', async () => {
@@ -336,6 +360,22 @@ describe('Users API', () => {
             .set('Authorization', `Bearer ${token}`)
             .send({
                 userId: "999999000000000000000000",
+                username: "username01",
+                email: "newEmail",
+                firstName: "newFirstName",
+                lastName: "newLastName"
+            })
+            
+            expect(response.statusCode).toBe(400)
+        })
+
+        
+        test('should return error 400 if userId is not an id', async () => {
+            const response = await request(app)
+            .patch('/users')
+            .set('Authorization', `Bearer ${token}`)
+            .send({
+                userId: "0",
                 username: "username01",
                 email: "newEmail",
                 firstName: "newFirstName",
@@ -393,9 +433,7 @@ describe('Users API', () => {
         })
 
         test('should return 400 if catalogueId is not a proper objId', async () => {
-            let response
-
-            response = await request(app)
+            const response = await request(app)
             .patch('/users')
             .set('Authorization', `Bearer ${token}`)
             .send({
@@ -404,23 +442,26 @@ describe('Users API', () => {
                 email: "newEmail",
                 firstName: "newFirstName",
                 lastName: "newLastName",
-                addCatalogues: "999999"
-            })
-            expect(response.statusCode).toBe(400)
-
-            response = await request(app)
-            .patch('/users')
-            .set('Authorization', `Bearer ${token}`)
-            .send({
-                userId: "100000000000000000000000",
-                username: "username01",
-                email: "newEmail",
-                firstName: "newFirstName",
-                lastName: "newLastName",
-                delCatalogues: "999999"
+                addCatalogues: "invalidId"
             })
             expect(response.statusCode).toBe(400)
         })
+
+        test('should return 400 if catalogueId is not a proper objId', async () => {
+            const response = await request(app)
+            .patch('/users')
+            .set('Authorization', `Bearer ${token}`)
+            .send({
+                userId: "100000000000000000000000",
+                username: "username01",
+                email: "newEmail",
+                firstName: "newFirstName",
+                lastName: "newLastName",
+                delCatalogues: "invalidId"
+            })
+            expect(response.statusCode).toBe(400)
+        })
+
     })
 
 
@@ -449,6 +490,16 @@ describe('Users API', () => {
             .delete('/users')
             .set('Authorization', `Bearer ${token}`)
             .send()
+            expect(response.statusCode).toBe(400)
+        })
+
+        test('should return error 400 if userId is not a valid object id', async () => {            
+            const response = await request(app)
+            .delete('/users')
+            .set('Authorization', `Bearer ${token}`)
+            .send({
+                userId: "invalidId"
+            })
             expect(response.statusCode).toBe(400)
         })
 

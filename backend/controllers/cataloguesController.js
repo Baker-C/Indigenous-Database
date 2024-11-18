@@ -1,23 +1,22 @@
 const Catalogue = require('../schemas/Catalogue')
 const User = require('../schemas/User')
 const Book = require('../schemas/Book')
+const { userSavedCatalogue } = require('../schemas/Catalogue')
 const mongoose = require('mongoose')
+const { isValid } = require('date-fns')
 const ObjId = mongoose.Types.ObjectId.createFromHexString
-
-// reserved name used for all saved entries
-const savedName = 'My Saved' 
-// default catalogue for all users
+const isValidObjId = mongoose.Types.ObjectId.isValid
 
 
 
 // @desc Get a single catalogue
 // @route GET /catalogues
-// @access Private
+// @access Public
 const get = async (req, res) => {
     const { ids } = req.body
 
     // check for provided info
-    if (!(ids)) {
+    if (!ids) {
         return res
         .status(400)
         .json({ 
@@ -73,11 +72,11 @@ const create = async (req, res) => {
     const { name, ownerId, entries } = req.body
 
     // Confirm data
-    if ( !ownerId ) {
+    if ( !ownerId | !isValidObjId(ownerId) ) {
         return res
         .status(400)
         .json({ 
-            message: 'An ownerId is required'
+            message: 'A valid ownerId is required'
         })
     }
 
@@ -131,7 +130,7 @@ const create = async (req, res) => {
     }
 
     // set initial name
-    initialName = initialName ? initialName : `Untitiled ${owner?.catalogues.length + 1}`
+    initialName = name ? name : `Untitiled ${owner?.catalogues.length + 1}`
 
     // create catalogue
     const catalogueObj = { 
@@ -186,11 +185,11 @@ const update = async (req, res) => {
     const { id, name, description, addEntries, delEntries, color } = req.body
 
     // Confirm data
-    if (!id) {
+    if (!id | !isValidObjId(id)) {
         return res
         .status(400)
         .json({ 
-            message: `An id is required` 
+            message: `A valid catalogue id is required` 
         })
     }
 
@@ -208,7 +207,7 @@ const update = async (req, res) => {
     }
     
     // Check against illegal names
-    if (title && (title === savedName)) {
+    if (name && (name === userSavedCatalogue)) {
         return res
         .status(400)
         .json({ 
@@ -216,9 +215,9 @@ const update = async (req, res) => {
         })
     }
 
-    // update catalogue info
+    if (name) catalogue.name = name
 
-    if (title) catalogue.title = title
+    if (description) catalogue.description = description
     
     // check and add new entries
     if (addEntries) {
@@ -336,11 +335,11 @@ const update = async (req, res) => {
 const remove = async (req, res) => {
     const { id } = req.body
 
-    if ( !id ) {
+    if ( !id | !isValidObjId(id) ) {
         return res
         .status(400)
         .json({ 
-            message: 'Catalogue id and userId is required.'
+            message: 'Valid Catalogue id is required.'
         })
     }
 
@@ -356,11 +355,11 @@ const remove = async (req, res) => {
         .json({ 
             message: `Catalogue not found` 
         })
-    } else if (catalogue.title === savedName) {
+    } else if (catalogue.name === userSavedCatalogue) {
         return res
         .status(400)
         .json({ 
-            message: `Illegal to delete ${savedName} catalogue` 
+            message: `Illegal to delete ${userSavedCatalogue} catalogue` 
         })
     }
 

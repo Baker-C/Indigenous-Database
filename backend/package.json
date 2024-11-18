@@ -6,7 +6,12 @@
   "scripts": {
     "start": "node server",
     "dev": "cross-env NODE_ENV=development nodemon server",
-    "test": "cross-env NODE_ENV=test  jest --detectOpenHandles --forceExit"
+    "test": "cross-env NODE_ENV=test  jest --detectOpenHandles --forceExit",
+    "test:users": "cross-env NODE_ENV=test  jest __test__/usersController.test.js --detectOpenHandles --forceExit",
+    "test:books": "cross-env NODE_ENV=test  jest __test__/booksController.test.js --detectOpenHandles --forceExit",
+    "test:util": "cross-env NODE_ENV=test  jest __test__/controllersUtil.test.js --detectOpenHandles --forceExit"
+
+
   },
   "keywords": [],
   "author": "",

@@ -1,35 +1,33 @@
 const User = require('../schemas/User')
-const Group = require('../schemas/Group')
 const Catalogue = require('../schemas/Catalogue')
+const { userSavedCatalogue } = require('../schemas/Catalogue')
+const Util = require('./util')
 const bcrypt = require('bcrypt')
 const mongoose = require('mongoose')
 const ObjId = mongoose.Types.ObjectId.createFromHexString
 
-// reserved name used for catalogue holding all user saved entries
-const savedName = 'My Saved' 
-// default catalogue for all users
-
-
 
 // @desc Get a single user
 // @route GET /users
-// @access Private
+// @access Public
 const get = async (req, res) => {
     const { username, userId } = req.body
 
-    if (!username && !userId) {
-        return res
-        .status(400)
-        .json({ 
+    if (!username && !userId ) {
+        return res.status(400).json({ 
             message: 'User ID or username required.' 
         })
     }
 
-    // Converts single arguments into array if not already
-    const usernames = Array.isArray(username) ? username : (username ? [username] : [])
-    const userIds = Array.isArray(userId) ? userId : (userId ? [userId] : [])
+    const usernames = Util.toArray(username)
+    const userIds = Util.toArray(userId)
 
-    // returns all users in list if username or userId is a list
+    if (Util.invalidObjId(userIds)) {
+        return res.status(400).json({ 
+            message: 'Invalid User ID.' 
+        })
+    }
+
     const users = await User
     .find({
         $or: [
@@ -38,21 +36,17 @@ const get = async (req, res) => {
         ]
     })
     .populate('catalogues')
-    .select('-password')
+    .select('-email -password')
     .lean()
     .exec()
 
     if (!users?.length) {
-        return res
-        .status(400)
-        .json({ 
-            message: users
+        return res.status(400).json({ 
+            message: 'Users not found.'
         })
-    } else {
-        return res
-        .status(200)
-        .json(users)
     }
+
+    return res.status(200).json(users)
 }
 
 
@@ -60,38 +54,40 @@ const get = async (req, res) => {
 // @route POST /users
 // @access Private
 const create = async (req, res) => {
+    Util.trimWhitespace(req.body)
+
     const { username, email, password, rePassword, firstName, lastName } = req.body
 
-    // Confirm data
     if ( !username || !email || !password || !rePassword || !firstName || !lastName ) {
-        return res
-        .status(400)
-        .json({ 
+        return res.status(400).json({ 
             message: 'A firstName, lastName, username, email, and password rePassword are required.' 
         })
     }
 
-    // Check that passwords match
-    if (password !== rePassword) {
-        return res
-        .status(400)
-        .json({
-            message: 'The password and rePassword need to match.' 
+    if (Util.usernameOverMaxLength(username)) {
+        return res.status(400).json({
+            message: 'Username is too long'
         })
     }
 
-    // Check for duplicate usernames or emails
+    if (password !== rePassword) {
+        return res.status(400).json({
+            message: 'The password and rePassword need to match.' 
+        })
+    }
+    
+
     const duplicate = await User
     .findOne({ username: username })
-    .lean()
-    .exec()
+    .countDocuments()
+    
+
     if (duplicate) {
-        return res
-        .status(409)
-        .json({ 
+        return res.status(409).json({ 
             message: 'Duplicate username found.' 
         })
     }
+    
 
     // User object with hashed pass
     const hashedPwd = await bcrypt.hash(password, 10) // Salt rounds = 10
@@ -107,27 +103,21 @@ const create = async (req, res) => {
 
     const user = await User.create(userObj)
 
-    // Check for created
     if (!user) {
-        res
-        .status(400)
-        .json({ 
+        res.status(400).json({ 
             message: 'Error creating user.' 
         }) 
     }
-
+    
     // Create Saved Books catalogue
     const savedObj = {
-        "name": savedName,
+        "name": `${userSavedCatalogue}`,
         "description": "All of your saved entries",
         "owner": user._id
-    }
+    }    
 
-    // save to users profile
     const savedCatalogue = await Catalogue
-    .create({
-        ...savedObj
-    })
+    .create(savedObj)
 
     if (!savedCatalogue) {
         await User
@@ -135,20 +125,15 @@ const create = async (req, res) => {
         .lean()
         .exec()
 
-        return res
-        .status(400)
-        .json({ 
-            message: `Error creating ${savedName} for new user` 
+        return res.status(400).json({ 
+            message: `Error creating ${userSavedCatalogue} for new user` 
         })
     } else {
         user.catalogues = [ savedCatalogue._id ]
+        
         await user.save()
 
-        return res
-        .status(201)
-        .json({ 
-            message: `New user ${username} created.` 
-        })
+        return res.status(201).json( user )
     }
 }
 
@@ -157,15 +142,20 @@ const create = async (req, res) => {
 // @route PATCH /users
 // @access Private
 const update = async (req, res) => {
+    Util.trimWhitespace(req.body)
+    
     const { userId, username, email, firstName, lastName, addCatalogues, delCatalogues } = req.body
 
-    
-    // Confirm data, username is required
-    if ( !userId ) {
-        return res
-        .status(400)
-        .json({ 
-            message: 'User Id is required for udates.' 
+    // confirm data
+    if ( !userId | Util.invalidObjId(userId) ) {
+        return res.status(400).json({ 
+            message: 'A Valid User Id is required for udates.' 
+        })
+    }
+
+    if (username && Util.usernameOverMaxLength(username)) {
+        return res.status(400).json({
+            message: 'Username too long'
         })
     }
     
@@ -175,32 +165,24 @@ const update = async (req, res) => {
     .exec()
 
     if (!user) {
-        return res
-        .status(400)
-        .json({ 
+        return res.status(400).json({ 
             message: 'User not found'
         })
     }
 
     // Confirm user token belongs to user being changed
     if (req.user !== user.username) {
-        return res
-        .status(401)
-        .json({
+        return res.status(401).json({
             message: 'User token does not match.'
         })
     }
 
-    // Check for duplicate username
     const duplicate = await User
-    .findOne({ username })
-    .lean()
-    .exec()
+    .findOne({ username: username })
+    .countDocuments()
 
-    if (duplicate && (duplicate?.username?.toString() === username) && (user.username !== username)) {
-        return res
-        .status(409)
-        .json({ 
+    if (duplicate && (user.username !== username)) {
+        return res.status(409).json({ 
             message: 'Duplicate username found.' 
         })
     }
@@ -216,27 +198,19 @@ const update = async (req, res) => {
      
     if (addCatalogues) {
         // Converts single arguments into array if not already
-        const listCatalogues = Array.isArray(addCatalogues) ? addCatalogues : (addCatalogues ? [addCatalogues] : [])
+        const listCatalogues = Util.toArray(addCatalogues)
 
         
-        // get object ids
-        let addObjIds
-        try {
-            addObjIds = listCatalogues.map(entry => 
-                ObjId(entry)
-            )
-        } catch (err) {
-            return res
-            .status(400)
-            .json({ 
+        if (Util.invalidObjId(listCatalogues)) {
+            return res.status(400).json({ 
                 message: 'Add catalogues contains a non-ObjId.' 
             })
         }
-        
+
+        const objIds = listCatalogues.map(entry => ObjId(entry))
+
         // filter out the ids that are already in the list
-        const filteredObjIds = addObjIds.filter(addObjId => 
-            !user.catalogues.includes(addObjId)
-        )
+        const filteredObjIds = objIds.filter(objId => !user.catalogues?.includes(objId))
         
         // check that the catalogues exist
         const checkedCatalogues = await Catalogue
@@ -245,7 +219,7 @@ const update = async (req, res) => {
         })
         .lean()
         .exec()
-        
+
         if (filteredObjIds?.length !== checkedCatalogues?.length) {
             return res
             .status(400)
@@ -262,26 +236,18 @@ const update = async (req, res) => {
 
     if (delCatalogues) {
         // Converts single arguments into array if not already
-        const listCatalogues = Array.isArray(delCatalogues) ? delCatalogues : (delCatalogues ? [delCatalogues] : [])
+        const listCatalogues = Util.toArray(delCatalogues)
 
-        // get object ids
-        let delObjIds
-        try {
-            delObjIds = listCatalogues.map(entry => 
-                ObjId(entry)
-            )
-        } catch (err) {
-            return res
-            .status(400)
-            .json({ 
-                message: 'Del catalogues contains a non-ObjId.' 
+        if (Util.invalidObjId(listCatalogues)) {
+            return res.status(400).json({ 
+                message: 'Add catalogues contains a non-ObjId.' 
             })
         }
+
+        const objIds = listCatalogues.map(entry => ObjId(entry))
         
         // if any are matching, delete them
-        user.catalogues = user.catalaogues?.filter(catalogueObjId => 
-            !delObjIds.includes(catalogueObjId)
-        )
+        user.catalogues = user.catalogues?.filter(objId => !objIds?.includes(objId))
     }
 
     // Confirm update
@@ -299,17 +265,19 @@ const remove = async (req, res) => {
     const { userId } = req.body
 
     // confirm data
-    if (!userId) {
-        return res.status(400).json({ message: 'User Id is required.'})
+    if (!userId | Util.invalidObjId(userId)) {
+        return res.status(400).json({ 
+            message: 'A valid User Id is required.'
+        })
     }
 
-    // Check is user exists
     const user = await User
     .findById(userId)
     .populate({ 
         path: 'catalogues',
         select: 'owner'
     })
+    .select('catalogues username')
     .exec()
 
     if (!user) {
@@ -353,7 +321,9 @@ const remove = async (req, res) => {
     .exec()
 
     if (!deletedUser) {
-        return res.status(400).json({ message: 'Failed to delete user.' })
+        return res.status(400).json({ 
+            message: 'Failed to delete user.' 
+        })
     }
 
     res.status(204).end()

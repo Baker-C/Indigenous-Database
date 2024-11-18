@@ -1,6 +1,8 @@
 const mongoose = require('mongoose')
 const { Schema } = mongoose;
 
+module.exports.userSavedCatalogue = "My Saved"
+
 const catalogueSchema = new Schema({
     name: {
         type: String,
@@ -44,4 +46,4 @@ const catalogueSchema = new Schema({
     }
 })
 
-module.exports = mongoose.model('Catalogue', catalogueSchema) 
+module.exports = mongoose.model('Catalogue', catalogueSchema)
