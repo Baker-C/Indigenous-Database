@@ -7,10 +7,10 @@ import '../../styles/search.css'
 const BookCollection = ({ title }) => {
     const [query, setQuery] = useState('')
     const [page, setPage] = useState(0)
-    const pageSize = 10
     const [numPages, setNumPages] = useState(0)
     const [books, setBooks] = useState([])
     const [callCount, setCallCount] = useState(0)
+    const pageSize = 10
 
     const {
         data: booksData,
@@ -93,6 +93,8 @@ const BookCollection = ({ title }) => {
     return content
 }
 
+
+
 const SearchBar = ({ handleSubmit }) => {
     const [input, setInput] = useState('')
 
@@ -115,6 +117,8 @@ const SearchBar = ({ handleSubmit }) => {
         </div>
     )
 }
+
+
 
 const PageButtons = ({ numPages, changePage }) => {
     // create number array of size numPages
