@@ -16,11 +16,14 @@ const baseQuery = fetchBaseQuery({
     }
 })
 
+
+
 const baseQueryWithReauth = async (args, api, extraOptions) => {
     // args = req url, method, body
     // api = signal, dispatch, getState()
     // passes in access token from state in baseQuery
-   
+   const startTime = performance.now()
+
     let result = await baseQuery(args, api, extraOptions)
 
     // if query fails, reset token
@@ -40,6 +43,10 @@ const baseQueryWithReauth = async (args, api, extraOptions) => {
             return refreshResult
         }
     }
+
+    const endTime = performance.now()
+    const totalTimeInSeconds = ((endTime - startTime) / 1000).toFixed(2)
+    console.log(`Request to ${args.url} took ${totalTimeInSeconds} seconds`)
 
     return result
 }

@@ -54,81 +54,73 @@ describe('Books API', () => {
     })
 
     describe("GET /books", () => {
-        test('should return 200 and 3 pages', async () => {
+        test('should return 200, all books, and 1 page', async () => {
             const response = await request(app)
             .get('/books')
             .query({
-                q: "",
-                s: "1",
-                getNumPages: "true"
+                q: ""
             })
-
+            
             const { 
                 statusCode, 
-                body: {
-                    numPages
-                }
-            } = response
-
-            expect(statusCode).toBe(200)
-            expect(numPages).toBe(3)
-        })
-
-        test('should return 200 and 3 pages', async () => {
-            const response = await request(app)
-            .get('/books')
-            .query({
-                s: "1",
-                getNumPages: "true"
-            })
-
-            const { 
-                statusCode, 
-                body: {
-                    numPages
-                }
-            } = response
-
-            expect(statusCode).toBe(200)
-            expect(numPages).toBe(3)
-        })
-
-        test('should return 200 and 1 page', async () => {
-            const response = await request(app)
-            .get('/books')
-            .query({
-                s: "3",
-                getNumPages: "true"
-            })
-
-            const { 
-                statusCode, 
-                body: {
-                    numPages
-                }
-            } = response
-
-            expect(statusCode).toBe(200)
-            expect(numPages).toBe(1)
-        })
-
-        test('should return 200 and all books', async () => {
-            const response = await request(app)
-            .get('/books')
-            .query({
-                q: "title"
-            })
-
-            const { 
-                statusCode, 
-                body: {
+                body: { 
+                    numPages,
                     books
                 }
             } = response
 
-            expect(books.length).toBe(3)
+            console.log(response.body)
+
             expect(statusCode).toBe(200)
+            expect(numPages).toBe(1)
+            expect(books.length).toBe(3)
         })
+
+        test('should return 200, all books, and 3 pages', async () => {
+            const response = await request(app)
+            .get('/books')
+            .query({
+                q: "title",
+                s: "1"
+            })
+
+            const { 
+                statusCode, 
+                body: { 
+                    numPages,
+                    books
+                }
+            } = response
+            console.log(response.body)
+
+            expect(statusCode).toBe(200)
+            expect(numPages).toBe(3)
+            expect(books[0].title).toBe("title01")
+        })
+
+        test('should return 200, all books, and 3 pages', async () => {
+            const response = await request(app)
+            .get('/books')
+            .query({
+                q: "title",
+                s: "1",
+                p: "3"
+            })
+
+            const { 
+                statusCode, 
+                body: { 
+                    numPages,
+                    books
+                }
+            } = response
+
+            expect(statusCode).toBe(200)
+            expect(numPages).toBe(3)
+            expect(books[0].title).toBe("title03")
+        })
+
+        
 
         test('should return 200 and one book', async () => {
             const response = await request(app)
@@ -139,21 +131,40 @@ describe('Books API', () => {
 
             const { 
                 statusCode, 
-                body: {
+                body: { 
+                    numPages,
                     books
                 }
             } = response
+            console.log(response.body)
 
-            expect(books.length).toBe(1)
             expect(statusCode).toBe(200)
+            expect(numPages).toBe(1)
+            expect(books.length).toBe(1)
+            expect(books[0].title).toBe('title01')
         })
 
-        test('should return 400', async () => {
+        test('should return 400 due to invalid title.', async () => {
             const response = await request(app)
             .get('/books')
             .query({
                 q: "invalidTitle"
             })
+            console.log(response.body)
+
+            const { statusCode } = response
+
+            expect(statusCode).toBe(400)
+        })
+
+        test('should return 400 due to page number being too high.', async () => {
+            const response = await request(app)
+            .get('/books')
+            .query({
+                q: "title",
+                p: "10"
+            })
+            console.log(response.body)
 
             const { statusCode } = response
 

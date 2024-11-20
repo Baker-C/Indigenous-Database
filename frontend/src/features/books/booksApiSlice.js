@@ -55,13 +55,22 @@ export const booksApiSlice = apiSlice.injectEndpoints({
                     return response.status === 200 && !result.isError
                 },
             }),
-            staleTime: 10 * 60 * 1000,  
             transformResponse: responseData => {
-                const loadedBooks = responseData.books.map(book => {
-                    book.id = book._id
-                    return book
-                })
-                return booksAdapter.setAll(initialState, loadedBooks)
+                if (!responseData || !Array.isArray(responseData.books)) {
+                    console.error('Unexpected response format', responseData)
+                    return booksAdapter.getInitialState()
+                }
+                const loadedBooks = responseData.books.map(book => ({
+                    ...book,
+                    id: book._id
+                }))
+                let newState = booksAdapter.setAll(initialState, loadedBooks)
+                const loadedNumPages = {
+                    numPages: responseData.numPages,
+                    id: 'numPagesId'
+                }
+                newState = booksAdapter.addOne(newState, loadedNumPages)
+                return newState
             },
             provideTags: (result, error, arg) => {
                 if (result?.ids) {

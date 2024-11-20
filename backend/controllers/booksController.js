@@ -10,65 +10,55 @@ const ObjId = mongoose.Types.ObjectId.createFromHexString
 // @route GET /books
 // @access Private
 const get = async (req, res) => {
-    /* pagination queries */
-    const pageNumber = parseInt(req.query.p, 10) || 0
-    const pageSize = parseInt(req.query.s, 10) || 20
-    const getNumPages = req.query.getNumPages// boolean-esque, either undefined or not undefined
-    /* end of pagination queries */
+    const pageNumber = Util.parsePageNumber(req.query.p)
+    const pageSize = Util.parsePageSize(req.query.s)
 
     /* search queries */
     const query = req.query.q || ""
     /* end of queries */
-
-    // Get number of pages yielded by the query 
-    if (getNumPages) {
-        const numBooks = await Book
-        .find({
-            $or : [
-                { 
-                    author: { $regex: `.*${query}.*`, $options: 'i' } 
+    console.log(req.query)
+    try {
+        // Query a single page of books
+        const results = await Book.aggregate([
+            { 
+                $match: {
+                    $or: [
+                        { author: { $regex: `.*${query}.*`, $options: 'i' } },
+                        { title: { $regex: `.*${query}.*`, $options: 'i' } },
+                    ],
                 },
-                { 
-                    title: { $regex: `.*${query}.*`, $options: 'i' } 
+            },
+            {
+                $facet: {
+                    metadata: [{ $count: 'total' }],
+                    books: [
+                        { $skip: pageNumber * pageSize },
+                        { $limit: pageSize },
+                    ],
                 },
-            ]
-        })
-        .countDocuments()
-        .lean()
-        .exec()
-        const numPages = Math.ceil(numBooks / pageSize)
+            },
+        ])
+        console.log(pageNumber, pageSize, query, results)
+        const metadata = results[0]?.metadata[0] || { total: 0 }
+        const numPages = Math.ceil(metadata?.total / pageSize) || 0
+        const books = results[0]?.books
+        console.log(books)
+        if (!books?.length) {
+            return res.status(400).json({
+                message: 'Books not found.'
+            })
+        }
 
         return res.status(200).json({ 
-            numPages 
+            books,
+            numPages: numPages
+        })
+    } catch (error) {
+        return res.status(500).json({ 
+            message: error.message || 'An error occurred while fetching books.' 
         })
     }
 
-    // Query a single page of books
-    const books = await Book
-    .find({
-        $or: [
-            { 
-                author: { $regex: `.*${query}.*`, $options: 'i' }
-            },
-            { 
-                title: { $regex: `.*${query}.*`, $options: 'i' }
-            },
-        ]
-    })
-    .skip(pageNumber * pageSize)
-    .limit(pageSize)
-    .lean()
-    .exec()
-
-    if (!books?.length) {
-        return res.status(400).json({ 
-            message: 'Books not found' 
-        })
-    }
-
-    return res.status(200).json({ 
-        books 
-    })
 }
 
 

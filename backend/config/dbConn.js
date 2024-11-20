@@ -14,6 +14,7 @@ const connectDB = async () => {
             .then(() => console.log("MongoDB Memory Server connected."))
         } else {
             await mongoose.connect(process.env.DATABASE_URI)
+            .then(() => console.log("MongoDB Server connected."))
         }
     } catch (err) {
         console.log(err)

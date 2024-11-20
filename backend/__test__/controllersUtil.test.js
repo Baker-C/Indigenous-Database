@@ -301,6 +301,84 @@ describe("API Controller Utility Functions", () => {
     })
 
 
+    
+    describe('parsePageNumber', () => {
+        test('should return 5', async () => {
+            const param = '5'
+
+            const ret = Util.parsePageNumber(param)
+
+            expect(ret).toBe(5)
+        })
+
+        test('should return 0', async () => {
+            const paramList = [
+                "page num should be 0",
+                "0",
+                "-200",
+                undefined,
+                13,
+                true,
+                false
+            ]
+            
+            for (const input of paramList) {
+                const ret = Util.parsePageNumber(input)
+    
+                expect(ret).toBe(0)
+            }
+        })
+    })
+
+    describe('parsePageSize', () => {
+        test('should return 50', async () => {
+            const param = '50'
+
+            const ret = Util.parsePageSize(param)
+
+            expect(ret).toBe(50)
+        })
+
+        test('should return 1', async () => {
+            const param = "-100"
+            
+            const ret = Util.parsePageSize(param)
+    
+            expect(ret).toBe(1)
+        })
+
+        test('should return 20', async () => {
+            const paramList = [
+                "0",
+                "page num should be 50",
+                undefined,
+                13,
+                true,
+                false
+            ]
+            
+            for (const input of paramList) {
+                const ret = Util.parsePageSize(input)
+
+                expect(ret).toBe(20)
+            }
+        })
+
+        test('should return 100', async () => {
+            const paramList = [
+                "100",
+                "200"
+            ]
+            
+            for (const input of paramList) {
+                const ret = Util.parsePageSize(input)
+    
+                expect(ret).toBe(100)
+            }
+        })
+    })
+
+
     describe('Object Exists Functions', () => {
         beforeAll(async () => {
             await connectDB()
