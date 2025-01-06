@@ -1,20 +1,40 @@
+:root {
+    --header-height: 65px;
+}
+
+.header .search-bar {
+    padding: 7px 10px 7px 10px;
+}
+
 .header {
     width: 100%;
-    height: fit-content;
+    height: 60px;
     top: 0;
-    position: static;
-    display: flex;
-    direction: column;
-    z-index: 2;
+    z-index: 5;
+    color: var(--dark-text-01);
 }
 
 .upper-container {
     width: 100%;
-    height: 65px;
-    background-color: var(--dark-acc-color);
+    height:var(--header-height);
+    background-color: var(--main-acc);
     top: 0;
-    z-index: 3;
-    position: fixed;
+    z-index: 6;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    border-bottom: 1px solid black;
+    box-shadow: 0 1px 5px 1px var(--dark-btn);
+}
+
+.lower-container {
+    width: 100%;
+    top: 50px;
+    height: 45px;
+    background-color: var(--main-acc);
+    top: 0;
+    z-index: 4;
     display: flex;
     flex-direction: row;
     justify-content: space-between;
@@ -24,43 +44,24 @@
 .left-child-container {
     position: relative;
     height: 100%;
-    width: 40%;
-    background-color: var(--dark-acc-color);
+    background-color: var(--main-acc);
     display: flex;
     justify-content: flex-start;
     text-align: left;
+    font-weight:lighter;
 }
 
-.home-link:hover {
-    color: var(--main-text-color);
-    text-decoration: none;
+.home-link-container {
+    width: fit-content;
+    text-wrap: none;
+    height: 30px;
 }
 
-.header h2 {
-    font-size: 23px;
-    text-wrap: nowrap;
-    padding: 0;
-    margin: 10px 10px 0px 20px;
-}
+    .home-link:hover {
+        color: var(--dark-text-02);
+        text-decoration: none;
+    }
 
-
-.header h3 {
-    font-size: 13px;
-    text-wrap: nowrap;
-    margin: 0 20px;
-}
-
-.header p {
-    font-size: 15px;
-    text-wrap: nowrap;
-}
-
-.right-child-container {
-    position: relative;
-    height: 100%;
-    width: 30%;
-    background-color: var(--dark-acc-color);
-}
 
 .nav-links-container {
     display: flex;
@@ -73,16 +74,75 @@
     text-transform: capitalize;
 }
 
-.content-container {
+.navlink-container {
+    position: relative;
     height: 100%;
+    width: 100%;
     display: flex;
     align-items: center;
-    justify-content: center;
+    transition: border-bottom 100ms ease;
+}
+
+.navlink-container::before {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 4%;
+    background-color: rgba(0,0,0,0); /* Outline color */
+    pointer-events: none; /* Prevent interaction */
+    transition: background-color 300ms ease;
+}
+
+    .navlink-container:hover::before {
+        background-color: rgba(0,0,0,0.5); /* Outline color on hover */
+    }
+
+.navlink-label {
     width: 100%;
     cursor: pointer;
 }
-    .content-container:hover {
-        text-decoration: underline;
-    }
+
+
+.button-container-header {
+    display: flex;
+    height: 100%;
+    width: fit-content;
+    justify-content: flex-end;
+    align-items: center;
+    margin: 0;
+    background-color: var(--main-acc);
+}
+
+.button-header {
+    width: 80px;
+    padding: 8px 0;
+    font-size: 14px;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+    transition: background-color 0.1s ease;
+}
+
+
+.button-one-header {
+    background-color:var(--dark-btn);
+    color:var(--light-text-01);
+    outline: var(--dark-text-01) solid 1px;
+}
+
+.button-two-header {
+    outline: var(--dark-text-01) solid 1px;
+    background-color:var(--light-btn);
+}
+
+.button-one-header:hover {
+    background-color:var(--dark-btn-hover);
+}
+
+.button-two-header:hover {
+    background-color:var(--light-btn-hover);
+}
 
 

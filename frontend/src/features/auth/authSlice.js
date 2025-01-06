@@ -15,7 +15,7 @@ const authSlice = createSlice({
             const { accessToken } = action.payload // payload contains token
             state.token = accessToken // use state.auth.token outside of auth slice
         },
-        logout: (state, action) => {
+        logout: (state) => {
             state.token = null // cookie handled in backend
             state.user = null
         },

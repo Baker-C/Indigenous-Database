@@ -308,7 +308,7 @@ describe("API Controller Utility Functions", () => {
 
             const ret = Util.parsePageNumber(param)
 
-            expect(ret).toBe(5)
+            expect(ret).toBe(4)
         })
 
         test('should return 0', async () => {

@@ -1,17 +1,62 @@
-footer {
-    position: static;
-    width: 100%;
-    height: fit-content;
+textarea {
+    resize: none;
+}
+.footer {
+    background-color:var(--light-bg);
+    padding: 2rem;
+    padding-top: 4rem;
+    z-index: 10;
 }
 
-.footer {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    padding-top: 20px;
-    background-color: #f0f8ff;
-    border-top: 1px solid #e6f7f7;
-    z-index: 10;
+.polygon-overlay {
+    position: relative;
+    width: 100%;
+    z-index: 1;
+    margin-top: 100px;
+    background-color:var(--bs-light-bg);
+}
+.polygon-overlay::before {
+    content: '';
+    position: absolute;
+    top: -50px;
+    left: 0;
+    width: 100%;
+    height: 80px;
+    background-color:var(--bs-light-bg);
+    clip-path: polygon(0 0, 100% 70%, 100% 100%, 0 100%);
+}
+.polygon-overlay::after {
+    content: '';
+    position: absolute;
+    top: -70px;
+    left: 0;
+    width: 100%;
+    height: 80px;
+    background-color:var(--dark-acc);
+    z-index: -1;
+    clip-path: polygon(0 60%, 100% 0, 100% 100%, 0 100%);
+}
+.contact-us-title {
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin-bottom: 1rem;
+    position: relative;
+    top: -3rem;
+}
+.footer-links {
+    list-style-type: none;
+    padding: 0;
+}
+.footer-links li {
+    margin-bottom: 0.5rem;
+}
+.footer-links a {
+    text-decoration: none;
+    color: var(--dark-text-01);
+}
+.footer-links a:hover {
+    text-decoration: underline;
+    color: var(--dark-text-02);
 }
 
 .footer-column {
@@ -23,21 +68,20 @@ footer {
     border-width: 2px;
 }
 
-.footer-text {
-    margin-bottom: 10px;
-    text-align: left;
-    color: black;
-}
-
 .footer-bottom {
+    position: absolute;
+    bottom: 0;
+    margin: 0;
+    width: 100%;
+    height: 25px;
+    font-size: small;
+    left: 0;
     text-align: center;
-    padding: 10px;
-    background-color: #e6f7f7;
-    color: black;
-}
-
-.grey-line {
-    height: 100%;
-    width: 2px;
-    background-color: grey;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    border-top: 1px solid var(--main-acc);
+    background-color:var(--bs-dark-bg);
+    color:var(--dark-text-01);
 }

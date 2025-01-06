@@ -16,7 +16,7 @@ const Hero = () => {
     window.addEventListener('scroll', changeBGPosition)
 
     return (
-        <div className="container">
+        <div className="hero-container">
             <HeroTitle>
                 {titleMsg}
             </HeroTitle>
@@ -35,7 +35,7 @@ const Hero = () => {
 const HeroTitle = ({ children }) => {    
     return (
         <div className="titleContainer">
-            <h1 className="title">
+            <h1 className="hero-title">
                 {children}
             </h1>
         </div>

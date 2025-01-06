@@ -1,4 +1,4 @@
-import { createSelector, createEntityAdapter } from '@reduxjs/toolkit'
+import { createEntityAdapter } from '@reduxjs/toolkit'
 import { apiSlice } from '../../app/api/apiSlice'
 
 const booksAdapter = createEntityAdapter({})
@@ -66,8 +66,8 @@ export const booksApiSlice = apiSlice.injectEndpoints({
                 }))
                 let newState = booksAdapter.setAll(initialState, loadedBooks)
                 const loadedNumPages = {
-                    numPages: responseData.numPages,
-                    id: 'numPagesId'
+                    id: 'numPagesData',
+                    numPages: responseData.numPages
                 }
                 newState = booksAdapter.addOne(newState, loadedNumPages)
                 return newState
@@ -84,10 +84,16 @@ export const booksApiSlice = apiSlice.injectEndpoints({
     })
 })
 
+export const selectBooksByIds = (state, ids) => {
+    const books = booksApiSlice.endpoints.getBooks.select()(state)?.data || []
+    return books.filter(book => ids.includes(book._id))
+}
+
 export const { 
     useCreateBookMutation,
     useDeleteBookMutation, 
     useUpdateBookMutation,
-    useGetNumPagesQuery,
     useGetBooksQuery 
 } = booksApiSlice
+
+

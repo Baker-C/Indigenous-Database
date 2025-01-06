@@ -1,0 +1,7 @@
+.search-bar {
+    padding: 4px 10px 4px 10px;
+    border: 1px solid black;
+    outline: none;
+    border-radius: 2px;
+    width: max(300px, min(800px, 100%));
+}

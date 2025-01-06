@@ -1,17 +1,26 @@
 import React, { useState, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { useSelector } from 'react-redux'
 import { BarLoader } from 'react-spinners'
-import { useGetBooksQuery } from './booksApiSlice'
+import { useGetBooksQuery, selectBooksByIds } from './booksApiSlice'
+import { selectQuery } from '../search/searchSlice'
 import BookCard from './BookCard'
+import SearchBar from './../../components/SearchBar'
 import '../../styles/search.css'
 
 const BookCollection = ({ title }) => {
-    const [query, setQuery] = useState('')
+    let navigate = useNavigate()
     const [page, setPage] = useState(0)
     const [numPages, setNumPages] = useState(0)
+    const [pageSize, setPageSize] = useState(2)
     const [books, setBooks] = useState([])
-    const [callCount, setCallCount] = useState(0)
-    const pageSize = 10
+    const [startTime, setStartTime] = useState(0)
+    const [reqSentFlag, setReqSentFlag] = useState(false)
+    const [totalTime, setTotalTime] = useState(0)
+    console.log(page)
 
+    const query = useSelector(selectQuery)
+    
     const {
         data,
         isLoading,
@@ -19,63 +28,71 @@ const BookCollection = ({ title }) => {
         isError,
         error
     } = useGetBooksQuery(
-        { page, query }, 
+        { pageSize, page, query }, 
         { pollingInterval: 60 * 1000 }
     )
 
+    useEffect(() => {
+        setStartTime(() => (performance.now() / 1000).toFixed(2))
+        setReqSentFlag(true)
+    }, [query])
+    useEffect(() => {
+        reqSentFlag
+        ? setTotalTime(() => ((performance.now() / 1000) - startTime).toFixed(2))
+        : setReqSentFlag(false)        
+        setReqSentFlag(false)
+    }, [books])
 
     useEffect(() => {
         if (isSuccess && data?.entities) {
-            console.log("Beginning books setting")
-            console.log(Object.values(data?.entities))
-            setBooks(Object.values(data?.entities))
-            console.log(books)
+            const { numPagesData, ...booksData } = data?.entities
+            
+            setBooks(Object.values(booksData))
+            setNumPages(numPagesData.numPages)
+
+            const formattedQuery = query?.replace(/\s+/g, '+')
+            navigate(`/search?q=${formattedQuery}`)
         }
     }, [data])
 
-    useGetBooksQuery({ pageSize, query })
-
-    useEffect(() => {
-        console.log(isError)
-        console.log(error)
-    }, [page, query])
-    
-
-    // Cleans input and sets query
-    const handleSubmit = (searchInput) => {
-        const searchQuery = searchInput?.replace(/\s+/g, '+')
-        setQuery(searchQuery)
-    }
 
 
     let content
 
-    if (isLoading) content = (
-        <BarLoader 
-        color={'#000'} 
-        style={{margin: '0 100%'}} 
-        />
-    )
+    if (isLoading) {
+        const override = {
+            margin: "0 auto",
+            color: "#000",
+            width: "100%",
+            height: "70vh",
+            overflow: "hidden",
+            background: "#FFF"
+        }
+        content = (<BarLoader cssOverride={override}/>)
+    }
     
     
     if (isSuccess || isError) {
         const resultsContent = isError 
         ? <p className="errmsg">{error?.data?.message}</p> 
         : books?.map(book => <BookCard key={book.id} entry={book} />)
-                
+
         content = (
             <section className="search-page">
                 <h1>{title}</h1>
-                <SearchBar handleSubmit={handleSubmit} />
+                <SearchBar />
                 <div className='results-container'>
+                    <ResultsStats 
+                    page={page}
+                    time={totalTime} 
+                    count={books?.length + (pageSize * (numPages-1))} 
+                    />
                     {resultsContent}
                 </div>
-                <div>
-                    <PageButtons 
-                    numPages={numPages} 
-                    changePage={setPage} 
-                    />
-                </div>
+                <PageButtons 
+                numPages={numPages} 
+                changePage={setPage} 
+                />
             </section>
         )
     }
@@ -84,30 +101,15 @@ const BookCollection = ({ title }) => {
 }
 
 
-
-const SearchBar = ({ handleSubmit }) => {
-    const [input, setInput] = useState('')
-
-    const handleKeyDown = (e) => {
-        if (e.key === 'Enter') {
-            handleSubmit(input)
-        }
-    }
-
+const ResultsStats = ({ page, time, count }) => {
     return (
-        <div className="search-container">
-            <input 
-            type="text" 
-            className="search-bar" 
-            placeholder="Start your search with an author or title"
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            onKeyDown={handleKeyDown}
-            />
+        <div className="results-stats">
+            <p>
+                {`Page ${page+1} of approximately ${count} results (${time} seconds)`}
+            </p>
         </div>
     )
 }
-
 
 
 const PageButtons = ({ numPages, changePage }) => {
@@ -123,7 +125,6 @@ const PageButtons = ({ numPages, changePage }) => {
             {num + 1} 
         </button>
     ))
-
     return (
         <div>
             <button 
@@ -134,7 +135,7 @@ const PageButtons = ({ numPages, changePage }) => {
             {numberedButtons}
             <button 
             className='move-button' 
-            onClick={() => changePage((p) => (p < numPages - 1) ? p + 1 : p)}>
+            onClick={() => changePage((p) => (p < numPages-1) ? p + 1 : p)}>
                 Next
             </button>
         </div>

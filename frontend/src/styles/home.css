@@ -1,15 +1,18 @@
 :root {
     --bg-position: 20px;
+    --load-duration: 1000ms
 }
-.container {
+
+
+.hero-container {
     position: relative;
     display: flex;
     flex-direction: column;
     justify-content: space-around;
-    height: 120vh;
+    height: 90vh;
     background-size: auto 1290px;
     background-image: url('./../../public/assets/bg.jpg');
-    background-color: rgba(88, 100, 100, 0.66);
+    background-color: rgba(110, 123, 123, 0.66);
     background-blend-mode: darken;
     background-position-y: var(--bg-position);
     background-position-x: center;
@@ -26,10 +29,10 @@
     word-wrap: normal;
     margin: 0 auto;
     top: 40px;
-    animation: slideUp 500ms backwards 300ms;
+    animation: slideUp var(--load-duration) backwards 300ms;
 }
 
-.title {
+.hero-title {
     font-size: 47px;
     font-family: var(--heading-font);
     text-transform: capitalize;
@@ -38,7 +41,7 @@
     color: white;
 }
 
-.heading {
+.hero-heading {
     color: black;
 }
 
@@ -54,14 +57,14 @@
     width: 45%;
     margin: 0 auto;
     word-wrap: normal;
-    animation: slideUp 500ms backwards 900ms;
+    animation: slideUp var(--load-duration) backwards 900ms;
 }
 
 .text {
     font-size: 28px;
     font-family: var(--heading-font);
     line-height: 40px;
-    color: black;
+    color:var(--dark-text-01);
 }
 
 .searchButton {
@@ -72,15 +75,16 @@
     padding: 10px 0;
     font-size: 15px;
     font-family: var(--heading-font);
-    background-color: var(--main-acc-color);
+    background-color: var(--dark-btn);
     border-radius: 25px;
-    color: white;
+    color:var(--light-text-01);
     transition: background-color 300ms 50ms;
-    animation: slideUp 500ms backwards 1500ms;
+    animation: slideUp var(--load-duration) backwards 1500ms;
+    cursor: pointer;
 }
 
     .searchButton:hover {
-        background-color: var(--dark-acc-color);
+        background-color: var(--dark-btn-hover);
         transition-duration: 300ms;
     }
 

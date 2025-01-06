@@ -1,13 +1,65 @@
+@import 'bootstrap/dist/css/bootstrap.min.css';
+@import '@fortawesome/fontawesome-free/css/all.min.css';
+
 :root {
-    --main-bg-color: #dbe3e9;
-    --dark-bg-color: #b6d5e3;
-
-    --main-acc-color: #badad6;
-    --dark-acc-color: #36877d; 
+    --bs-primary-bg: #fffcf9;
+    --bs-dark-bg: #dad9ca;
+    --bs-light-bg: #f8f9fa;
 
 
-    --main-text-color: #fff;
+    --main-acc: #aad194;
+    --dark-acc: #5d5340; 
+
+    --dark-btn: #1d7151;
+    --dark-btn-hover: #335d4c;
+    --light-btn: #fffcf9;
+    --light-btn-hover: #f0efdc;
+
+
+    --light-text-01: #FFF;
+    --light-text-02: #edeeed;
+
+    --dark-text-01: #232f01;
+    --dark-text-02: #3d3d00;
 }
+
+.main-acc {
+    background-color: var(--main-acc);
+}
+
+.dark-acc {
+    background-color: var(--dark-acc);
+}
+
+.dark-btn {
+    background-color: var(--dark-btn);
+}
+.dark-btn:hover {
+    background-color: var(--dark-btn-hover);
+}
+
+.light-btn {
+    background-color: var(--light-btn);
+}
+.light-btn:hover {
+    background-color: var(--light-btn-hover);
+}
+/*
+Backgrounds: 
+    Use #CDA6D7 (lavender) or a very soft, almost-white version of it (#F3EAF5) for general page backgrounds.
+
+Headers and Navigation: 
+    Use #D08A23 (mustard) or #8B2D3E (maroon).
+
+Text: 
+    Use #2F1B2C (aubergine) for body text and headings for high contrast on lighter backgrounds.
+
+Accent Areas: 
+    Use #B44625 (reddish-orange) to draw attention to special sections like sales or announcements.
+
+Buttons and Links: 
+    Use the complementary button and link colors provided above to ensure functionality while maintaining aesthetic harmony.
+*/
 
 
 main {
@@ -98,3 +150,12 @@ form button:hover {
     background-color: #4573b0;
 }
 
+
+.shadow-unhover {
+    box-shadow: 0 4px 6px rgba(0,0,0,0.2); /* Shadow by default */
+    transition: box-shadow 500ms ease; /* Smooth transition */
+}
+
+.shadow-unhover:hover {
+    box-shadow: none; /* Removes shadow on hover */
+}

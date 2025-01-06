@@ -1,5 +1,8 @@
 {
   "devDependencies": {
     "@shelf/jest-mongodb": "^4.3.2"
+  },
+  "dependencies": {
+    "bootstrap": "^5.3.3"
   }
 }
