@@ -4,7 +4,8 @@
 }
 
 
-.hero-container {
+
+.hero-content-container {
     position: relative;
     display: flex;
     flex-direction: column;
@@ -21,8 +22,7 @@
     color: white;
 }
 
-
-.titleContainer {
+.title-container {
     position: relative;
     height: fit-content;
     width: 55%;
@@ -30,15 +30,6 @@
     margin: 0 auto;
     top: 40px;
     animation: slideUp var(--load-duration) backwards 300ms;
-}
-
-.hero-title {
-    font-size: 47px;
-    font-family: var(--heading-font);
-    text-transform: capitalize;
-    line-height: 70px;
-    letter-spacing: .4vw;
-    color: white;
 }
 
 .hero-heading {
@@ -79,7 +70,6 @@
     border-radius: 25px;
     color:var(--light-text-01);
     transition: background-color 300ms 50ms;
-    animation: slideUp var(--load-duration) backwards 1500ms;
     cursor: pointer;
 }
 
@@ -89,20 +79,11 @@
     }
 
 
-@keyframes slideUp {
-    0% {
-        transform: translateY(100px);
-        opacity: 0;
-    }
-    100% {
-        transform: translateY(0px);
-        opacity: 1;
-    }
-}
+
 
 
 @media screen and (max-width: 800px) {
-    .titleContainer {
+    .title-container {
         width: 70%;
         text-align: center;
     }
@@ -121,35 +102,8 @@
     }
 }
 
-@keyframes move {
-    0% {
-        transform: translate(0) rotate(180deg);
-        opacity: 0; 
-    }
-    50% {
-        transform: translate(0, 5px) rotate(180deg);
-        opacity: 1;
-    }
-    100% {
-        transform: translate(0) rotate(180deg);
-        opacity: 0;
-    }
-}
 
-@-webkit-keyframes move {
-    0% {
-        transform: translate(0) rotate(180deg);
-        opacity: 0;  
-    }
-    50% {
-        transform: translate(0, 5px) rotate(180deg);
-        opacity: 1;
-    }
-    100% {
-        transform: translate(0) rotate(180deg);
-        opacity: 0;
-    }
-}
+
 
 .swipeIcon {
     position: fixed;

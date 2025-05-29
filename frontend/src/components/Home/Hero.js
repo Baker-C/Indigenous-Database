@@ -1,8 +1,8 @@
-import React from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 import { selectCurrentUser } from '../../features/auth/authSlice'
 import '../../styles/home.css'
+import '../../styles/animations.css'
 
 const Hero = () => {
     const titleMsg = "modern indigenous resources all in one place"
@@ -16,7 +16,7 @@ const Hero = () => {
     window.addEventListener('scroll', changeBGPosition)
 
     return (
-        <div className="hero-container">
+        <div className="hero-content-container">
             <HeroTitle>
                 {titleMsg}
             </HeroTitle>
@@ -30,25 +30,19 @@ const Hero = () => {
     )
 }
 
-
-
 const HeroTitle = ({ children }) => {    
     return (
-        <div className="titleContainer">
-            <h1 className="hero-title">
-                {children}
-            </h1>
-        </div>
+        <h1 className="slide-up">
+            {children}
+        </h1>
     )
 }
 
 const HeroText = ({ children }) => {    
     return (
-        <div className="textContainer">
-            <p className="hero-text">
-                {children}
-            </p>
-        </div>
+        <p className="p1 slide-up-300">
+            {children}
+        </p>
     )
 }
 
@@ -58,7 +52,7 @@ const SearchButton = ({ children }) => {
 
     const usernameURL = user?.username ? `/${user.username}` : ''
     return (
-        <button type="button" className="searchButton" onClick={() => navigate(`${usernameURL}/search`)}>
+        <button type="button" className="searchButton slide-up-600" onClick={() => navigate(`${usernameURL}/search`)}>
             {children}
         </button>
     )

@@ -1,7 +1,26 @@
 .search-bar {
-    padding: 4px 10px 4px 10px;
-    border: 1px solid black;
+    padding: 10px 16px;
+    width: max(150px, min(800px, 100%));
+    border-radius: 50px;
+    background-color: #f2f2f2;
+    border: 1px solid #9f9f9f;
+    font-size: 14px;
+    color: #555;
+    transition: all 0.2s ease;
     outline: none;
-    border-radius: 2px;
-    width: max(300px, min(800px, 100%));
+}
+
+.search-bar::placeholder {
+    color: #999;
+}
+
+.search-bar:hover {
+    background-color: #f8f8f8;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.search-bar:focus {
+    background-color: #ffffff;
+    border: 1px solid #000000;
+    box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.05);
 }

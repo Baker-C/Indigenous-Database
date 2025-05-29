@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 import { selectCurrentUser } from '../features/auth/authSlice'
@@ -24,9 +24,29 @@ const Header = () => {
     }
 
 
+    const [showHeader, setShowHeader] = useState(true);
+    const lastScrollY = useRef(0);
+
+    useEffect(() => {
+        const handleScroll = () => {
+            const currentScrollY = window.scrollY;
+
+            if (currentScrollY < lastScrollY.current || currentScrollY < 100) {
+                setShowHeader(true);
+            } else {
+                setShowHeader(false);
+            }
+
+            lastScrollY.current = currentScrollY;
+        };
+
+        window.addEventListener('scroll', handleScroll);
+        return () => window.removeEventListener('scroll', handleScroll);
+    }, []);
+
 
     return (
-        <div className='d-flex flex-column container-fluid border-bottom p-0 main-acc'>
+        <div className={`d-flex flex-column container-fluid border-bottom p-0 main-acc header ${showHeader ? '' : 'hide-header'}`}>
 
             <div className='header shadow-sm d-flex flex-row position-relative align-items-center justify-content-between p-0 overflow-hidden'>
                 
@@ -40,14 +60,12 @@ const Header = () => {
                         <NavLinks navLinks={navLinks} />
                     </div>
 
-                    <div className='col d-md-block d-none container-fluid'>
+                    <div className='col d-sm-block d-none container-fluid'>
                         <SearchBar />
                     </div>
                 </div>
                 
-                <div className='bg-primary'>
-                    <AccountButtons />
-                </div>
+                <AccountButtons />
 
             </div>
 
@@ -79,7 +97,7 @@ const SearchButton = () => {
 
     return (
         <button 
-        className='d-flex align-items-center d-md-none py-2 border-0 bg-transparent'
+        className='d-flex align-items-center d-sm-none py-2 border-0 bg-transparent'
         onClick={() => navigate('/search')}>
             <i className='fas fa-search fs-5' ></i>
         </button>    )
@@ -91,14 +109,14 @@ const AccountButtons = () => {
     let navigate = useNavigate()
 
     return (
-        <div class="button-container-header d-flex d-md-row">
+        <div className="button-container-header d-flex d-md-row">
             <button 
             class="m-3 me-0 shadow-unhover button-header button-one-header"
             onClick={() => navigate('/signup')}>
                 Sign Up
             </button>
 
-            <button class="m-3 shadow-unhover button-header button-two-header"
+            <button className="m-3 shadow-unhover button-header button-two-header"
             onClick={() => navigate('/login')}>
                 Log In
             </button>
