@@ -12,9 +12,8 @@
 
 
 .header {
-    width: 100%;
+    width: fill;
     height: fit-content;
-    top: 0;
     z-index: 5;
     color: var(--dark-text-01);
     position: fixed;

@@ -4,5 +4,9 @@
   },
   "dependencies": {
     "bootstrap": "^5.3.3"
+  },
+  "scripts": {
+    "start:frontend": "cd frontend && npm run start",
+    "start:backend": "cd backend && npm run dev"
   }
 }

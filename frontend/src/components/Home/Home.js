@@ -1,5 +1,8 @@
 import React from 'react'
 import Hero from './Hero'
+import About from './About'
+import Features from './Features'
+import HomeCopy from '../../copy/HomeCopy'
 
 
 const Home = () => {
@@ -15,90 +18,13 @@ const Home = () => {
             communities to develop. Our overarching objective is to foster 
             connections within indigenous communities by providing a center 
             for access to resources & platforms to communicate."
-            image="./"
+            image=""
         />
-        <About />
-        <Database />
-        <Community />
-        <Feedback />
-        <Contact />
+        <div className="home-body-container">
+            <About Copy={HomeCopy.AboutCopy}/>
+            <Features Copy={HomeCopy.FeaturesCopy} />
+        </div>
     </div>
-    )
-}
-
-
-const About = ({ heading, text, image }) => {
-    return (
-        <div className="introText">
-            <p className="text">
-                {heading}
-            </p>
-            <img className="introImage" src={image} alt='' />
-            <p className="text">
-                {text}
-            </p>
-            <div className="introBotLine" />
-        </div>
-    )
-}
-
-const Database = ({ heading, text, image }) => {
-    return (
-        <div className="introText">
-            <p className="text">
-                {heading}
-            </p>
-            <img className="introImage" src={image} alt='' />
-            <p className="text">
-                {text}
-            </p>
-            <div className="introBotLine" />
-        </div>
-    )
-}
-
-const Community = ({ heading, text, image }) => {
-    return (
-        <div className="introText">
-            <p className="text">
-                {heading}
-            </p>
-            <img className="introImage" src={image} alt='' />
-            <p className="text">
-                {text}
-            </p>
-            <div className="introBotLine" />
-        </div>
-    )
-}
-
-const Feedback = ({ heading, text, image }) => {
-    return (
-        <div className="introText">
-            <p className="text">
-                {heading}
-            </p>
-            <img className="introImage" src={image} alt='' />
-            <p className="text">
-                {text}
-            </p>
-            <div className="introBotLine" />
-        </div>
-    )
-}
-
-const Contact = ({ heading, text, image }) => {
-    return (
-        <div className="introText">
-            <p className="text">
-                {heading}
-            </p>
-            <img className="introImage" src={image} alt='' />
-            <p className="text">
-                {text}
-            </p>
-            <div className="introBotLine" />
-        </div>
     )
 }
 

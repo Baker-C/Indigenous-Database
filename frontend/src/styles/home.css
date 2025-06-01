@@ -5,7 +5,7 @@
 
 
 
-.hero-content-container {
+.hero-container {
     position: relative;
     display: flex;
     flex-direction: column;
@@ -20,42 +20,6 @@
     background-attachment: fixed;
     text-align: center;
     color: white;
-}
-
-.title-container {
-    position: relative;
-    height: fit-content;
-    width: 55%;
-    word-wrap: normal;
-    margin: 0 auto;
-    top: 40px;
-    animation: slideUp var(--load-duration) backwards 300ms;
-}
-
-.hero-heading {
-    color: black;
-}
-
-.hero-text {
-    font-size: 28px;
-    font-family: var(--heading-font);
-    line-height: 40px;
-    color: white;
-}
-
-.textContainer {
-    height: fit-content;
-    width: 45%;
-    margin: 0 auto;
-    word-wrap: normal;
-    animation: slideUp var(--load-duration) backwards 900ms;
-}
-
-.text {
-    font-size: 28px;
-    font-family: var(--heading-font);
-    line-height: 40px;
-    color:var(--dark-text-01);
 }
 
 .searchButton {
@@ -80,6 +44,34 @@
 
 
 
+.home-body-container {
+    size: fit-content;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 90px;
+    gap: 60px;
+}
+
+.home-about {
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+    gap: 30px;
+}
+
+.home-features-container {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 30px;
+}
+
+.home-feature-card {
+    width: 300px;
+}
 
 
 @media screen and (max-width: 800px) {
@@ -91,92 +83,5 @@
     .title {
         font-size: 30px;
     }
-
-    .textContainer {
-        width: 70%;
-        text-align: center;
-    }
-
-    .text {
-        font-size: 20px;
-    }
 }
 
-
-
-
-.swipeIcon {
-    position: fixed;
-    bottom: 0;
-    left: 47.5%;
-    width: 5%;
-    animation: move 2s ease-in-out 1500ms 5;
-    opacity: 0;
-}
-
-
-
-/* Introduction after Hero */
-
-.introContainer {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    height: fit-content;
-    width: 100%;
-    margin-bottom: 60px;
-    color: black;
-}
-
-.introTopLine {
-    height: 120px;
-    width: 2px;
-    position: absolute;
-    top: -60px;
-}
-
-.introBotLine {
-    height: 120px;
-    width: 2px;
-    position: absolute;
-    bottom: -120px;
-}
-
-.introHeading {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    padding: 60px 0;
-    padding-bottom: 30px;
-    color: black;
-}
-
-.introHeading::after {
-    content: '';
-    position: absolute;
-    bottom: 30px;
-    left: 0;
-    width: 100%;
-    height: 5px;
-    scale: .2 1;
-}
-
-.introText {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
-    width: 60%;
-    color: black;
-}
-
-.introImage {
-    width: 60%;
-    height: 120px;
-    padding: 15px 0;
-}

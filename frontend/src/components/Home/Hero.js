@@ -16,7 +16,7 @@ const Hero = () => {
     window.addEventListener('scroll', changeBGPosition)
 
     return (
-        <div className="hero-content-container">
+        <div className="hero-container">
             <HeroTitle>
                 {titleMsg}
             </HeroTitle>

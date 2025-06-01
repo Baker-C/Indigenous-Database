@@ -63,19 +63,12 @@ Buttons and Links:
 
 
 main {
-    position: relative;
-    top: -1px;
+    max-width: 1750px;
+    margin: auto;
 }
 
 body {
     background-color: var(--main-bg-color);
-    text-align: center;
-    margin: 0;
-    padding: 0;
-}
-
-input {
-    background-color: #ddd;
 }
    
 h1 {
