@@ -1,11 +1,17 @@
-const AboutCopy = {
+const Hero = {
+    Heading: "A Living Library of Indigenous Creations",
+    Text: "Search across a growing collection of sources to Indigenous-made books, goods, and media",
+    Button: "Start Your Search"
+}
+
+const About = {
     Heading: "What is the Indigenous Database?",
     Image: "",
     TopText: "This is a growing directory of links to Indigenous-made work. Every entry leads you to a real creator, a real store, or a real archive. We don't host the material — we help you find where to access it, whether it's a paid shop or a public resource.",
     BottomText: "Think of it like a library card for the internet. If you're looking for something authentic, this is where to start."
 }
 
-const FeaturesCopy = [
+const Features = [
     {
         Heading: "Search What Matters",
         Text: "Find Indigenous-made books, podcasts, shoes, beadwork, articles, and more"
@@ -28,14 +34,14 @@ const FeaturesCopy = [
     }
 ]
 
-const ReasonCopy = {
+const Reason = {
     Heading: "Why this Project Matters",
     Image: "",
     TopText: "Indigenous creators often get buried online. Search results don't always reflect the people behind the work.",
     BottomText: "This database makes Indigenous-made easier to find, easier to support, and easier to trust. Everything here is chosen with care, and every link leads back to the people who made it or their distributor."
 }
 
-const ConnectedCopy = {
+const Connect = {
     TopText: "Want to see what's added next?",
     BottomText: "Have something to share?",
     Link1: "Get Updates",
@@ -43,6 +49,6 @@ const ConnectedCopy = {
 }
 
 
-const HomeCopy = { AboutCopy, FeaturesCopy, ReasonCopy, ConnectedCopy }
+const HomeCopy = { Hero, About, Features, Reason, Connect }
 
 export default HomeCopy

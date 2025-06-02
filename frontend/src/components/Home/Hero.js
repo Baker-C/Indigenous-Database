@@ -4,11 +4,7 @@ import { selectCurrentUser } from '../../features/auth/authSlice'
 import '../../styles/home.css'
 import '../../styles/animations.css'
 
-const Hero = () => {
-    const titleMsg = "modern indigenous resources all in one place"
-    const heroMsg = "Search through our collections of sources, organizations, and opportunities"
-    const searchBtnMsg = "Start your search today!"
-        
+const Hero = ({ Copy }) => {
     const changeBGPosition = () => {
         const scrollDist = window.scrollY
         document.documentElement.style.setProperty('--bg-position', (scrollDist*(-1.5))+"px")
@@ -16,33 +12,19 @@ const Hero = () => {
     window.addEventListener('scroll', changeBGPosition)
 
     return (
-        <div className="hero-container">
-            <HeroTitle>
-                {titleMsg}
-            </HeroTitle>
-            <HeroText>
-                {heroMsg}
-            </HeroText>
-            <SearchButton>
-                {searchBtnMsg}    
-            </SearchButton>
+        <div className="home-hero-container">
+            <div className="w-75 g-3">
+                <h1 className="slide-up py-3 light-text-1">
+                    {Copy.Heading}
+                </h1>
+                <h2 className="slide-up-300 py-3 m-auto w-50 light-text-1">
+                    {Copy.Text}
+                </h2>
+                <SearchButton>
+                    {Copy.Button}    
+                </SearchButton>
+            </div>
         </div>
-    )
-}
-
-const HeroTitle = ({ children }) => {    
-    return (
-        <h1 className="slide-up">
-            {children}
-        </h1>
-    )
-}
-
-const HeroText = ({ children }) => {    
-    return (
-        <p className="p1 slide-up-300">
-            {children}
-        </p>
     )
 }
 
@@ -52,7 +34,7 @@ const SearchButton = ({ children }) => {
 
     const usernameURL = user?.username ? `/${user.username}` : ''
     return (
-        <button type="button" className="searchButton slide-up-600" onClick={() => navigate(`${usernameURL}/search`)}>
+        <button type="button" className="dark-btn hero-btn slide-up-600 my-3" onClick={() => navigate(`${usernameURL}/search`)}>
             {children}
         </button>
     )

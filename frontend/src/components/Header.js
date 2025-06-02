@@ -1,28 +1,13 @@
-import React, { useEffect, useState, useRef } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 import { selectCurrentUser } from '../features/auth/authSlice'
 import SearchBar from '../components/SearchBar'
+import HeaderCopy from '../copy/HeaderCopy'
 import '../styles/header.css'
 
 const Header = () => {
     const user = useSelector(selectCurrentUser)
-
-    const usernameURL = user?.username ? `/${user.username}` : ''
-    
-    let navLinks
-    if (user) {
-        navLinks = [
-            { text: 'search', linkedTo: user ? `${usernameURL}/search` : '/search' },
-            { text: 'contact', linkedTo: user ? `${usernameURL}/contact` : '/contact' },
-        ]
-    } else {
-        navLinks = [
-            { text: 'search', linkedTo: `/search` },
-            { text: 'contact', linkedTo: `/contact` }
-        ]
-    }
-
 
     const [showHeader, setShowHeader] = useState(true);
     const lastScrollY = useRef(0);
@@ -46,18 +31,14 @@ const Header = () => {
 
 
     return (
-        <div className={`d-flex flex-column container-fluid border-bottom p-0 main-acc header ${showHeader ? '' : 'hide-header'}`}>
-
+        <div className={`d-flex flex-column container-fluid border-bottom p-0 bg-2 header ${showHeader ? '' : 'hide-header'}`}>
             <div className='header shadow-sm d-flex flex-row position-relative align-items-center justify-content-between p-0 overflow-hidden'>
-                
                 <div className='d-flex justify-content-start align-items-center container-fluid'>
 
-                    <HomeLink user={user} />
-
+                    <HomeLink />
                     <SearchButton />
-
-                    <div className='d-none d-lg-block col-2'>
-                        <NavLinks navLinks={navLinks} />
+                    <div className='d-none d-xl-block col-2'>
+                        <NavLinks navLinks={HeaderCopy.NavLinks} />
                     </div>
 
                     <div className='col d-sm-block d-none container-fluid'>
@@ -66,11 +47,10 @@ const Header = () => {
                 </div>
                 
                 <AccountButtons />
-
             </div>
 
-            <div className='d-lg-none'>
-                <NavLinks navLinks={navLinks} />
+            <div className='lower-container d-xl-none'>
+                <NavLinks navLinks={HeaderCopy.NavLinks} />
             </div>
         </div>
     )
@@ -80,17 +60,13 @@ const Header = () => {
 
 const HomeLink = ({ user }) => {
     return (
-        <div className='left-child-container col align-items-center justify-content-center col-1 me-3 text-nowrap home-link-container'>
-            <Link 
-            to={`/${user?.username ? user.username : ''}`}
-            className='home-link fs-3 text-center d-flex align-items-center justify-content-center'>
+        <div className='h-100 me-3 text-nowrap home-link-container'>
+            <Link to="" className='fs-3 text-center d-flex align-items-center justify-content-center'>
                 Indigenous DB
             </Link>
         </div>
     )
 }
-
-
 
 const SearchButton = () => {
     let navigate = useNavigate()
@@ -110,13 +86,12 @@ const AccountButtons = () => {
 
     return (
         <div className="button-container-header d-flex d-md-row">
-            <button 
-            class="m-3 me-0 shadow-unhover button-header button-one-header"
+            <button className="dark-btn m-3 me-0 shadow-unhover button-header button-one-header"
             onClick={() => navigate('/signup')}>
                 Sign Up
             </button>
 
-            <button className="m-3 shadow-unhover button-header button-two-header"
+            <button className="light-btn m-3 shadow-unhover button-header button-two-header"
             onClick={() => navigate('/login')}>
                 Log In
             </button>
@@ -125,35 +100,20 @@ const AccountButtons = () => {
 }
 
 const NavLinks = ({navLinks}) => {
-    return (
-        <div className='lower-container'>
-            <div className='nav-links-container'>
-                {navLinks.map((link, index) => {
-                    return (
-                        <NavOption
-                            key={index}
-                            text={link.text}
-                            link={link.linkedTo}
-                        />
-                    )
-                })}
-            </div>
-        </div>
-    )
-}
-
-const NavOption = ({ text, link }) => {
     let navigate = useNavigate()
 
     return (
-        <div className='navlink-container'>
-            <label className="navlink-label px-2" onClick={() => navigate(link)}>
-                {text}
-            </label>
-        </div>
+            <div className='nav-links-container'>
+                {navLinks.map((link, index) => {
+                    return (
+                        <label key={index} className="navlink" onClick={() => navigate(link.Link)}>
+                            {link.Text}
+                        </label>
+                    )
+                })}
+            </div>
     )
 }
-
 
 
 export default Header

@@ -1,49 +1,79 @@
-@import 'bootstrap/dist/css/bootstrap.min.css';
 @import '@fortawesome/fontawesome-free/css/all.min.css';
+@import 'https://fonts.googleapis.com/css2?family=Enriqueta:wght@400;500;600&display=swap';
 
 :root {
-    --bs-primary-bg: #fffcf9;
-    --bs-dark-bg: #dad9ca;
-    --bs-light-bg: #f8f9fa;
+    --bg-1: #fffcf9;
+    --bg-2: #dad9ca;
+    --bg-3: #f8f9fa;
 
+    --light-text-1: #FFF;
+    --light-text-2: #edeeed;
 
-    --main-acc: #aad194;
-    --dark-acc: #5d5340; 
+    --dark-text-1: #232f01;
+    --dark-text-2: #3d3d00;
 
-    --dark-btn: #1d7151;
-    --dark-btn-hover: #335d4c;
-    --light-btn: #fffcf9;
-    --light-btn-hover: #f0efdc;
+    --color-1: #1d7151;
+    --color-1-light: #2f8b6a;
+    --color-1-dark: #16543a;
 
+    --color-2: #D0511F;
+    --color-2-light: #e06a3b;
+    --color-2-dark: #a03c1a;
 
-    --light-text-01: #FFF;
-    --light-text-02: #edeeed;
-
-    --dark-text-01: #232f01;
-    --dark-text-02: #3d3d00;
+    --color-3: #f9f5f5;
+    --color-3-light: #fdf6f6;
+    --color-3-dark: #dcd2d2;
 }
 
-.main-acc {
-    background-color: var(--main-acc);
+.color-1 {
+    background-color: var(--color-1);
 }
 
-.dark-acc {
-    background-color: var(--dark-acc);
+.color-2 {
+    background-color: var(--color-2);
+}
+
+.dark-text-1 {
+    color: var(--dark-text-1);
+}
+
+.light-text-1 {
+    color: var(--light-text-1);
 }
 
 .dark-btn {
-    background-color: var(--dark-btn);
+    color: var(--light-text-1);
+    background-color: var(--color-1);
+    cursor: pointer;
+    transition: background-color 0.3s ease, color 0.3s ease;
 }
 .dark-btn:hover {
-    background-color: var(--dark-btn-hover);
+    background-color: var(--color-1-light);
+}
+.dark-btn:active {
+    background-color: var(--color-1-dark);
 }
 
 .light-btn {
-    background-color: var(--light-btn);
+    color: var(--dark-text-1);
+    background-color: var(--color-3);
+    cursor: pointer;
 }
 .light-btn:hover {
-    background-color: var(--light-btn-hover);
+    background-color: var(--color-3-light);
 }
+.light-btn:active {
+    background-color: var(--color-3-dark);
+}
+
+.bg-1 {
+    background-color: var(--bg-1);
+}
+
+.bg-2 {
+    background-color: var(--bg-2);
+}
+
 /*
 Backgrounds: 
     Use #CDA6D7 (lavender) or a very soft, almost-white version of it (#F3EAF5) for general page backgrounds.
@@ -70,18 +100,17 @@ main {
 body {
     background-color: var(--main-bg-color);
 }
-   
+
 h1 {
     font-size: 3.2rem;
-    font-family: 'Roboto', sans-serif;
+    font-family: 'Enriqueta', sans-serif;
     font-weight: 500;
-    text-transform: uppercase;
     color: var(--main-text-color);
 }
 
 h2 {
     font-size: 2rem;
-    font-family: 'Roboto', sans-serif;
+    font-family: 'Enriqueta', sans-serif;
     font-weight: 600;
     color: var(--main-text-color);
 }

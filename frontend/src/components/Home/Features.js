@@ -5,11 +5,11 @@ const Features = ({ Copy }) => {
         <section className="home-features-container">
             {Copy.map((feature, index) => {
                 return (
-                    <div key={index} className="home-feature-card">
+                    <div key={index} className="home-feature-card bg-dark">
                         <h2>
                             {feature.Heading}
                         </h2>
-                        <p className="p1">
+                        <p className="p2">
                             {feature.Text}
                         </p>
                     </div>
