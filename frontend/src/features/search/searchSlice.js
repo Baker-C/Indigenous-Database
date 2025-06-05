@@ -3,7 +3,7 @@ import { createSlice } from '@reduxjs/toolkit'
 const searchSlice = createSlice({
     name: 'Search',
     initialState: {
-        query: '', // Shared query state
+        query: '',
     },
     reducers: {
         setQuery(state, action) {

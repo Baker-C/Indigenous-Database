@@ -41,11 +41,17 @@
     color: var(--light-text-1);
 }
 
+.dark-btn, .light-btn {
+    cursor: pointer;
+    text-wrap: nowrap;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    padding: 0.3rem 1rem;
+    border-radius: 10px;
+    border: none;
+}
 .dark-btn {
     color: var(--light-text-1);
     background-color: var(--color-1);
-    cursor: pointer;
-    transition: background-color 0.3s ease, color 0.3s ease;
 }
 .dark-btn:hover {
     background-color: var(--color-1-light);
@@ -57,7 +63,6 @@
 .light-btn {
     color: var(--dark-text-1);
     background-color: var(--color-3);
-    cursor: pointer;
 }
 .light-btn:hover {
     background-color: var(--color-3-light);

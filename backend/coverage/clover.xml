@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1736237245253" clover="3.2.0">
-  <project timestamp="1736237245253" name="All files">
-    <metrics statements="670" coveredstatements="438" conditionals="360" coveredconditionals="181" methods="73" coveredmethods="40" elements="1103" coveredelements="659" complexity="0" loc="670" ncloc="670" packages="7" files="25" classes="25"/>
+<coverage generated="1748984120123" clover="3.2.0">
+  <project timestamp="1748984120123" name="All files">
+    <metrics statements="676" coveredstatements="442" conditionals="372" coveredconditionals="187" methods="79" coveredmethods="44" elements="1127" coveredelements="673" complexity="0" loc="676" ncloc="676" packages="7" files="25" classes="25"/>
     <package name="backend">
-      <metrics statements="41" coveredstatements="30" conditionals="8" coveredconditionals="3" methods="4" coveredmethods="0"/>
+      <metrics statements="42" coveredstatements="31" conditionals="10" coveredconditionals="5" methods="5" coveredmethods="1"/>
       <file name="server.js" path="C:\Users\Me\Desktop\Indigenous Database\Indigenous-Database\backend\server.js">
-        <metrics statements="41" coveredstatements="30" conditionals="8" coveredconditionals="3" methods="4" coveredmethods="0"/>
+        <metrics statements="42" coveredstatements="31" conditionals="10" coveredconditionals="5" methods="5" coveredmethods="1"/>
         <line num="1" count="2" type="stmt"/>
         <line num="2" count="2" type="stmt"/>
         <line num="3" count="2" type="stmt"/>
@@ -47,6 +47,7 @@
         <line num="55" count="0" type="stmt"/>
         <line num="56" count="0" type="stmt"/>
         <line num="60" count="2" type="stmt"/>
+        <line num="67" count="2" type="cond" truecount="2" falsecount="0"/>
       </file>
     </package>
     <package name="backend.__fixtures__">
@@ -62,7 +63,7 @@
       </file>
     </package>
     <package name="backend.config">
-      <metrics statements="29" coveredstatements="24" conditionals="8" coveredconditionals="5" methods="7" coveredmethods="6"/>
+      <metrics statements="30" coveredstatements="25" conditionals="10" coveredconditionals="7" methods="8" coveredmethods="7"/>
       <file name="allowedOrigins.js" path="C:\Users\Me\Desktop\Indigenous Database\Indigenous-Database\backend\config\allowedOrigins.js">
         <metrics statements="2" coveredstatements="2" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
         <line num="1" count="2" type="stmt"/>
@@ -78,7 +79,7 @@
         <line num="15" count="2" type="stmt"/>
       </file>
       <file name="dbConn.js" path="C:\Users\Me\Desktop\Indigenous Database\Indigenous-Database\backend\config\dbConn.js">
-        <metrics statements="21" coveredstatements="17" conditionals="4" coveredconditionals="2" methods="6" coveredmethods="5"/>
+        <metrics statements="22" coveredstatements="18" conditionals="6" coveredconditionals="4" methods="7" coveredmethods="6"/>
         <line num="1" count="3" type="stmt"/>
         <line num="2" count="3" type="stmt"/>
         <line num="5" count="3" type="stmt"/>
@@ -100,10 +101,11 @@
         <line num="30" count="3" type="stmt"/>
         <line num="33" count="0" type="stmt"/>
         <line num="37" count="3" type="stmt"/>
+        <line num="44" count="9" type="cond" truecount="2" falsecount="0"/>
       </file>
     </package>
     <package name="backend.controllers">
-      <metrics statements="490" coveredstatements="291" conditionals="328" coveredconditionals="167" methods="55" coveredmethods="30"/>
+      <metrics statements="492" coveredstatements="292" conditionals="332" coveredconditionals="168" methods="57" coveredmethods="31"/>
       <file name="authController.js" path="C:\Users\Me\Desktop\Indigenous Database\Indigenous-Database\backend\controllers\authController.js">
         <metrics statements="36" coveredstatements="7" conditionals="14" coveredconditionals="0" methods="4" coveredmethods="0"/>
         <line num="1" count="2" type="stmt"/>
@@ -144,7 +146,7 @@
         <line num="107" count="2" type="stmt"/>
       </file>
       <file name="booksController.js" path="C:\Users\Me\Desktop\Indigenous Database\Indigenous-Database\backend\controllers\booksController.js">
-        <metrics statements="85" coveredstatements="81" conditionals="72" coveredconditionals="53" methods="4" coveredmethods="4"/>
+        <metrics statements="86" coveredstatements="82" conditionals="74" coveredconditionals="54" methods="5" coveredmethods="5"/>
         <line num="1" count="2" type="stmt"/>
         <line num="2" count="2" type="stmt"/>
         <line num="3" count="2" type="stmt"/>
@@ -230,9 +232,10 @@
         <line num="261" count="1" type="stmt"/>
         <line num="266" count="1" type="stmt"/>
         <line num="270" count="2" type="stmt"/>
+        <line num="282" count="18" type="cond" truecount="1" falsecount="1"/>
       </file>
       <file name="cataloguesController.js" path="C:\Users\Me\Desktop\Indigenous Database\Indigenous-Database\backend\controllers\cataloguesController.js">
-        <metrics statements="106" coveredstatements="13" conditionals="68" coveredconditionals="0" methods="11" coveredmethods="0"/>
+        <metrics statements="107" coveredstatements="13" conditionals="70" coveredconditionals="0" methods="12" coveredmethods="0"/>
         <line num="1" count="2" type="stmt"/>
         <line num="2" count="2" type="stmt"/>
         <line num="3" count="2" type="stmt"/>
@@ -339,6 +342,7 @@
         <line num="389" count="0" type="stmt"/>
         <line num="396" count="0" type="stmt"/>
         <line num="403" count="2" type="stmt"/>
+        <line num="415" count="0" type="cond" truecount="0" falsecount="2"/>
       </file>
       <file name="groupsController.js" path="C:\Users\Me\Desktop\Indigenous Database\Indigenous-Database\backend\controllers\groupsController.js">
         <metrics statements="72" coveredstatements="9" conditionals="46" coveredconditionals="0" methods="10" coveredmethods="0"/>
@@ -614,9 +618,9 @@
       </file>
     </package>
     <package name="backend.middleware">
-      <metrics statements="49" coveredstatements="33" conditionals="16" coveredconditionals="6" methods="6" coveredmethods="4"/>
+      <metrics statements="51" coveredstatements="34" conditionals="20" coveredconditionals="7" methods="8" coveredmethods="5"/>
       <file name="errorHandler.js" path="C:\Users\Me\Desktop\Indigenous Database\Indigenous-Database\backend\middleware\errorHandler.js">
-        <metrics statements="9" coveredstatements="3" conditionals="2" coveredconditionals="0" methods="1" coveredmethods="0"/>
+        <metrics statements="10" coveredstatements="3" conditionals="4" coveredconditionals="0" methods="2" coveredmethods="0"/>
         <line num="1" count="2" type="stmt"/>
         <line num="3" count="2" type="stmt"/>
         <line num="4" count="0" type="stmt"/>
@@ -626,9 +630,10 @@
         <line num="9" count="0" type="stmt"/>
         <line num="11" count="0" type="stmt"/>
         <line num="14" count="2" type="stmt"/>
+        <line num="21" count="0" type="cond" truecount="0" falsecount="2"/>
       </file>
       <file name="logger.js" path="C:\Users\Me\Desktop\Indigenous Database\Indigenous-Database\backend\middleware\logger.js">
-        <metrics statements="18" coveredstatements="16" conditionals="2" coveredconditionals="1" methods="2" coveredmethods="2"/>
+        <metrics statements="19" coveredstatements="17" conditionals="4" coveredconditionals="2" methods="3" coveredmethods="3"/>
         <line num="1" count="2" type="stmt"/>
         <line num="2" count="2" type="stmt"/>
         <line num="3" count="2" type="stmt"/>
@@ -647,6 +652,7 @@
         <line num="23" count="58" type="stmt"/>
         <line num="24" count="58" type="stmt"/>
         <line num="27" count="2" type="stmt"/>
+        <line num="34" count="58" type="cond" truecount="1" falsecount="1"/>
       </file>
       <file name="loginLimiter.js" path="C:\Users\Me\Desktop\Indigenous Database\Indigenous-Database\backend\middleware\loginLimiter.js">
         <metrics statements="6" coveredstatements="4" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="0"/>

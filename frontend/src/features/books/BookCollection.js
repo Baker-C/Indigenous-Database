@@ -4,7 +4,7 @@ import { useSelector } from 'react-redux'
 import { BarLoader } from 'react-spinners'
 import { useGetBooksQuery, selectBooksByIds } from './booksApiSlice'
 import { selectQuery } from '../search/searchSlice'
-import BookCard from './BookCard'
+import BookCard from '../../components/BookCard'
 import SearchBar from './../../components/SearchBar'
 import '../../styles/search.css'
 
@@ -12,12 +12,11 @@ const BookCollection = ({ title }) => {
     let navigate = useNavigate()
     const [page, setPage] = useState(0)
     const [numPages, setNumPages] = useState(0)
-    const [pageSize, setPageSize] = useState(2)
+    const [pageSize, setPageSize] = useState(10)
     const [books, setBooks] = useState([])
     const [startTime, setStartTime] = useState(0)
     const [reqSentFlag, setReqSentFlag] = useState(false)
     const [totalTime, setTotalTime] = useState(0)
-    console.log(page)
 
     const query = useSelector(selectQuery)
     
@@ -104,8 +103,8 @@ const BookCollection = ({ title }) => {
 const ResultsStats = ({ page, time, count }) => {
     return (
         <div className="results-stats">
-            <p>
-                {`Page ${page+1} of approximately ${count} results (${time} seconds)`}
+            <p className="p1">
+                {`${page-numpages == 1 ? books?.length : page*pageSize} of approximately ${count} results (${time} seconds)`}
             </p>
         </div>
     )
@@ -118,13 +117,14 @@ const PageButtons = ({ numPages, changePage }) => {
 
     // turn numbers into the corresponding buttons
     const numberedButtons = numArray.map((num) => (
-        <button 
-        className='numbered-button' 
-        key={num} 
+        <button key={num} className="numbered-button"  
         onClick={() => changePage(num)}> 
-            {num + 1} 
+            <p>
+                {num + 1}
+            </p> 
         </button>
     ))
+
     return (
         <div>
             <button 

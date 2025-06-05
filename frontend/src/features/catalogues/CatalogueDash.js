@@ -9,7 +9,7 @@ import {
     useUpdateCatalogueMutation 
 } from './cataloguesApiSlice'
 import Redirect from '../../components/Redirect'
-import BookCard from '../books/BookCard'
+import BookCard from '../../components/BookCard'
 import ShareLinks from '../../components/ShareLinks'
 import '../../styles/cataloguedash.css'
 

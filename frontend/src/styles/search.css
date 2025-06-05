@@ -1,25 +1,14 @@
-.BarLoader {
-    min-height: 60vh;
-    margin: 0 100%;
-    overflow-x: hidden;
-}
-
-.search-page {
+.search-page-container {
     position: relative;
     width: 100%;
-    background-color: var(--main-bg);
+    margin: 90px 0;
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding-bottom: 30px;
     min-height: 70vh;
 }
 
-.search-page h1 {
-    color: black;
-}
-
-.results-container {
+.search-results-container {
     position: relative;
     display: flex;
     flex-direction: column;
@@ -27,10 +16,6 @@
     margin: 30px;
     padding: 1px 4px 0 4px;
     overflow: hidden;
-}
-
-.results-stats {
-    
 }
 
 .numbered-button {

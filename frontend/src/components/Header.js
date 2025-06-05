@@ -34,19 +34,16 @@ const Header = () => {
         <div className={`d-flex flex-column container-fluid border-bottom p-0 bg-2 header ${showHeader ? '' : 'hide-header'}`}>
             <div className='header shadow-sm d-flex flex-row position-relative align-items-center justify-content-between p-0 overflow-hidden'>
                 <div className='d-flex justify-content-start align-items-center container-fluid'>
-
                     <HomeLink />
                     <SearchButton />
-                    <div className='d-none d-xl-block col-2'>
-                        <NavLinks navLinks={HeaderCopy.NavLinks} />
-                    </div>
-
                     <div className='col d-sm-block d-none container-fluid'>
                         <SearchBar />
                     </div>
+                    <div className='d-none d-xl-block col-2'>
+                        <NavLinks navLinks={HeaderCopy.NavLinks} />
+                    </div>
                 </div>
-                
-                <AccountButtons />
+                {/* <AccountButtons /> */}
             </div>
 
             <div className='lower-container d-xl-none'>
